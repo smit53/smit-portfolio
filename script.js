@@ -397,28 +397,28 @@ function initInteractiveElements() {
 
 // Navigation
 function initNavigation() {
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu');
+const hamburger = document.querySelector('.hamburger');
+const navMenu = document.querySelector('.nav-menu');
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     // Mobile menu toggle
     hamburger.addEventListener('click', function() {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    });
-    
-    // Close mobile menu when clicking on a link
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+});
+
+// Close mobile menu when clicking on a link
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
+    hamburger.classList.remove('active');
+    navMenu.classList.remove('active');
         });
     });
-    
-    // Smooth scrolling for navigation links
+
+// Smooth scrolling for navigation links
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
+        e.preventDefault();
             
             const targetId = this.getAttribute('href');
             const targetSection = document.querySelector(targetId);
@@ -431,17 +431,17 @@ function initNavigation() {
                         offsetY: 80
                     },
                     ease: 'power3.inOut'
-                });
-            }
-        });
+            });
+        }
     });
-    
+});
+
     // Navbar scroll effect
-    window.addEventListener('scroll', () => {
-        const navbar = document.querySelector('.navbar');
-        if (window.scrollY > 100) {
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 100) {
             navbar.classList.add('scrolled');
-        } else {
+    } else {
             navbar.classList.remove('scrolled');
         }
     });
@@ -482,20 +482,20 @@ function initScrollEffects() {
     });
     
     // Reveal animations on scroll
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
                 entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-    
+        }
+    });
+}, observerOptions);
+
     // Observe elements for reveal animation
     const revealElements = document.querySelectorAll('.skill-category, .timeline-item, .project-card');
     revealElements.forEach(el => {
@@ -602,12 +602,12 @@ function initCounterAnimations() {
 function initFormHandling() {
     const contactForm = document.querySelector('.contact-form');
     
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(this);
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(this);
             const data = Object.fromEntries(formData);
             
             // Show success message (you can integrate with your backend here)
@@ -706,7 +706,7 @@ function showNotification(message, type = 'info') {
     // Remove after 3 seconds
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
+    setTimeout(() => {
             document.body.removeChild(notification);
         }, 300);
     }, 3000);

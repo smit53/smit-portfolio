@@ -9,6 +9,7 @@ A modern, responsive portfolio website showcasing professional experience, skill
 - Interactive animations and hover effects
 - Contact form with validation
 - Mobile-friendly navigation
+- **NEW**: Cutting-edge 3D effects with Three.js and GSAP animations
 
 ## 📁 Files
 
@@ -68,3 +69,6 @@ The form shows success messages. To make it functional:
 ---
 
 **Ready to showcase your professional portfolio!** 
+
+ository: Visit https://github.com/smit53/smit-portfolio
+Navigate to Settings: Click on the
