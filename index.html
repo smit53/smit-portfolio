@@ -5,31 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smit Borasaniya - Software Development Engineer</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 3D Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/MotionPathPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 </head>
 <body>
+    <!-- 3D Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+    
+    <!-- Particle System -->
+    <div id="particles-js"></div>
+    
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <div class="logo-3d">SB</div>
+            </div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <div class="loading-text">Initializing Portfolio...</div>
+        </div>
+    </div>
+
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar glass-effect">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="#home">Smit Borasaniya</a>
+                <a href="#home" class="logo-3d-text">Smit Borasaniya</a>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#home" class="nav-link" data-section="home">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        <span class="nav-text">Home</span>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#about" class="nav-link">About</a>
+                    <a href="#about" class="nav-link" data-section="about">
+                        <span class="nav-icon"><i class="fas fa-user"></i></span>
+                        <span class="nav-text">About</span>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#experience" class="nav-link">Experience</a>
+                    <a href="#experience" class="nav-link" data-section="experience">
+                        <span class="nav-icon"><i class="fas fa-briefcase"></i></span>
+                        <span class="nav-text">Experience</span>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#projects" class="nav-link">Projects</a>
+                    <a href="#projects" class="nav-link" data-section="projects">
+                        <span class="nav-icon"><i class="fas fa-code"></i></span>
+                        <span class="nav-text">Projects</span>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#contact" class="nav-link">Contact</a>
+                    <a href="#contact" class="nav-link" data-section="contact">
+                        <span class="nav-icon"><i class="fas fa-envelope"></i></span>
+                        <span class="nav-text">Contact</span>
+                    </a>
                 </li>
             </ul>
             <div class="hamburger">
@@ -44,89 +85,155 @@
     <section id="home" class="hero">
         <div class="hero-container">
             <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-text">Available for Opportunities</span>
+                </div>
                 <h1 class="hero-title">
-                    Software Development Engineer
-                    <span class="highlight">Building the Future</span>
+                    <span class="title-line">Software Development</span>
+                    <span class="title-line highlight">Engineer</span>
+                    <span class="title-line">Building the Future</span>
                 </h1>
                 <p class="hero-subtitle">
                     Passionate about cloud infrastructure, machine learning, and creating scalable solutions that drive innovation.
                 </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="5">0</span>
+                        <span class="stat-label">Years Experience</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="50">0</span>
+                        <span class="stat-label">Projects Completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="99">0</span>
+                        <span class="stat-label">% Uptime</span>
+                    </div>
+                </div>
                 <div class="hero-buttons">
-                    <a href="#contact" class="btn btn-primary">Get In Touch</a>
-                    <a href="#projects" class="btn btn-secondary">View Projects</a>
+                    <a href="#contact" class="btn btn-primary glass-effect">
+                        <span class="btn-text">Get In Touch</span>
+                        <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                    </a>
+                    <a href="#projects" class="btn btn-secondary glass-effect">
+                        <span class="btn-text">View Projects</span>
+                        <span class="btn-icon"><i class="fas fa-external-link-alt"></i></span>
+                    </a>
                 </div>
             </div>
             <div class="hero-visual">
                 <div class="floating-elements">
-                    <div class="element element-1">🚀</div>
-                    <div class="element element-2">⚡</div>
-                    <div class="element element-3">🔧</div>
-                    <div class="element element-4">📊</div>
+                    <div class="element element-1" data-speed="0.5">
+                        <div class="element-3d">🚀</div>
+                        <div class="element-trail"></div>
+                    </div>
+                    <div class="element element-2" data-speed="0.8">
+                        <div class="element-3d">⚡</div>
+                        <div class="element-trail"></div>
+                    </div>
+                    <div class="element element-3" data-speed="0.3">
+                        <div class="element-3d">🔧</div>
+                        <div class="element-trail"></div>
+                    </div>
+                    <div class="element element-4" data-speed="0.6">
+                        <div class="element-3d">📊</div>
+                        <div class="element-trail"></div>
+                    </div>
+                </div>
+                <div class="hero-3d-model">
+                    <div class="model-container">
+                        <div class="geometric-shapes">
+                            <div class="shape cube"></div>
+                            <div class="shape sphere"></div>
+                            <div class="shape pyramid"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            <div class="scroll-text">Scroll to explore</div>
         </div>
     </section>
 
     <!-- About Section -->
     <section id="about" class="about">
         <div class="container">
-            <h2 class="section-title">About Me</h2>
+            <div class="section-header">
+                <h2 class="section-title">About Me</h2>
+                <div class="section-subtitle">Passionate technologist with a drive for innovation</div>
+            </div>
             <div class="about-content">
-                <div class="about-text">
-                    <p>
+                <div class="about-text glass-effect">
+                    <p class="about-paragraph">
                         I'm a Software Development Engineer at Intuit, specializing in cloud infrastructure, 
                         incident response, and automation. With a Master's in Computer Science from Indiana University 
                         and a strong foundation in data science, I bring a unique blend of technical expertise and 
                         analytical thinking to every project.
                     </p>
-                    <p>
+                    <p class="about-paragraph">
                         My passion lies in building robust, scalable systems and leveraging cutting-edge technologies 
                         to solve complex problems. From optimizing CI/CD pipelines to implementing machine learning 
                         solutions, I thrive on challenges that push the boundaries of what's possible.
                     </p>
                 </div>
-                <div class="skills-grid">
-                    <div class="skill-category">
-                        <h3>Languages</h3>
+                <div class="skills-showcase">
+                    <div class="skill-category glass-effect" data-category="languages">
+                        <div class="category-header">
+                            <h3><i class="fas fa-code"></i> Languages</h3>
+                            <div class="category-icon">💻</div>
+                        </div>
                         <div class="skill-tags">
-                            <span class="skill-tag">Python</span>
-                            <span class="skill-tag">JavaScript</span>
-                            <span class="skill-tag">Go</span>
-                            <span class="skill-tag">R</span>
-                            <span class="skill-tag">Groovy</span>
-                            <span class="skill-tag">Bash</span>
+                            <span class="skill-tag" data-skill="Python">Python</span>
+                            <span class="skill-tag" data-skill="JavaScript">JavaScript</span>
+                            <span class="skill-tag" data-skill="Go">Go</span>
+                            <span class="skill-tag" data-skill="R">R</span>
+                            <span class="skill-tag" data-skill="Groovy">Groovy</span>
+                            <span class="skill-tag" data-skill="Bash">Bash</span>
                         </div>
                     </div>
-                    <div class="skill-category">
-                        <h3>Cloud & DevOps</h3>
+                    <div class="skill-category glass-effect" data-category="cloud">
+                        <div class="category-header">
+                            <h3><i class="fas fa-cloud"></i> Cloud & DevOps</h3>
+                            <div class="category-icon">☁️</div>
+                        </div>
                         <div class="skill-tags">
-                            <span class="skill-tag">AWS</span>
-                            <span class="skill-tag">Azure</span>
-                            <span class="skill-tag">Docker</span>
-                            <span class="skill-tag">Kubernetes</span>
-                            <span class="skill-tag">Argo CD</span>
-                            <span class="skill-tag">GitLab</span>
+                            <span class="skill-tag" data-skill="AWS">AWS</span>
+                            <span class="skill-tag" data-skill="Azure">Azure</span>
+                            <span class="skill-tag" data-skill="Docker">Docker</span>
+                            <span class="skill-tag" data-skill="Kubernetes">Kubernetes</span>
+                            <span class="skill-tag" data-skill="Argo CD">Argo CD</span>
+                            <span class="skill-tag" data-skill="GitLab">GitLab</span>
                         </div>
                     </div>
-                    <div class="skill-category">
-                        <h3>Databases</h3>
+                    <div class="skill-category glass-effect" data-category="databases">
+                        <div class="category-header">
+                            <h3><i class="fas fa-database"></i> Databases</h3>
+                            <div class="category-icon">🗄️</div>
+                        </div>
                         <div class="skill-tags">
-                            <span class="skill-tag">PostgreSQL</span>
-                            <span class="skill-tag">MongoDB</span>
-                            <span class="skill-tag">Neo4j</span>
-                            <span class="skill-tag">Cassandra</span>
-                            <span class="skill-tag">MySQL</span>
+                            <span class="skill-tag" data-skill="PostgreSQL">PostgreSQL</span>
+                            <span class="skill-tag" data-skill="MongoDB">MongoDB</span>
+                            <span class="skill-tag" data-skill="Neo4j">Neo4j</span>
+                            <span class="skill-tag" data-skill="Cassandra">Cassandra</span>
+                            <span class="skill-tag" data-skill="MySQL">MySQL</span>
                         </div>
                     </div>
-                    <div class="skill-category">
-                        <h3>Tools & Platforms</h3>
+                    <div class="skill-category glass-effect" data-category="tools">
+                        <div class="category-header">
+                            <h3><i class="fas fa-tools"></i> Tools & Platforms</h3>
+                            <div class="category-icon">🔧</div>
+                        </div>
                         <div class="skill-tags">
-                            <span class="skill-tag">TensorFlow</span>
-                            <span class="skill-tag">Tableau</span>
-                            <span class="skill-tag">Power BI</span>
-                            <span class="skill-tag">Splunk</span>
-                            <span class="skill-tag">Grafana</span>
-                            <span class="skill-tag">Datadog</span>
+                            <span class="skill-tag" data-skill="TensorFlow">TensorFlow</span>
+                            <span class="skill-tag" data-skill="Tableau">Tableau</span>
+                            <span class="skill-tag" data-skill="Power BI">Power BI</span>
+                            <span class="skill-tag" data-skill="Splunk">Splunk</span>
+                            <span class="skill-tag" data-skill="Grafana">Grafana</span>
+                            <span class="skill-tag" data-skill="Datadog">Datadog</span>
                         </div>
                     </div>
                 </div>
@@ -137,14 +244,22 @@
     <!-- Experience Section -->
     <section id="experience" class="experience">
         <div class="container">
-            <h2 class="section-title">Professional Experience</h2>
+            <div class="section-header">
+                <h2 class="section-title">Professional Experience</h2>
+                <div class="section-subtitle">My journey in technology and innovation</div>
+            </div>
             <div class="timeline">
-                <div class="timeline-item">
+                <div class="timeline-item glass-effect" data-year="2024">
                     <div class="timeline-content">
                         <div class="timeline-header">
-                            <h3>Software Development Engineer</h3>
-                            <span class="company">Intuit (Aerolens, LLC)</span>
-                            <span class="duration">June 2024 - Present</span>
+                            <div class="timeline-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="timeline-info">
+                                <h3>Software Development Engineer</h3>
+                                <span class="company">Intuit (Aerolens, LLC)</span>
+                                <span class="duration">June 2024 - Present</span>
+                            </div>
                         </div>
                         <ul class="achievements">
                             <li>Led 24/7 incident response operations, managing critical P0-P4 incidents and ensuring system reliability</li>
@@ -156,12 +271,17 @@
                     </div>
                 </div>
 
-                <div class="timeline-item">
+                <div class="timeline-item glass-effect" data-year="2023">
                     <div class="timeline-content">
                         <div class="timeline-header">
-                            <h3>Associate Director</h3>
-                            <span class="company">IU Ride, Fleet Services</span>
-                            <span class="duration">June 2023 - May 2024</span>
+                            <div class="timeline-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="timeline-info">
+                                <h3>Associate Director</h3>
+                                <span class="company">IU Ride, Fleet Services</span>
+                                <span class="duration">June 2023 - May 2024</span>
+                            </div>
                         </div>
                         <ul class="achievements">
                             <li>Built comprehensive Tableau dashboards driving 15% increase in user engagement through data-driven insights</li>
@@ -171,12 +291,17 @@
                     </div>
                 </div>
 
-                <div class="timeline-item">
+                <div class="timeline-item glass-effect" data-year="2022">
                     <div class="timeline-content">
                         <div class="timeline-header">
-                            <h3>Data Scientist Intern</h3>
-                            <span class="company">Infosense Pvt. Ltd.</span>
-                            <span class="duration">January 2022 - July 2022</span>
+                            <div class="timeline-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="timeline-info">
+                                <h3>Data Scientist Intern</h3>
+                                <span class="company">Infosense Pvt. Ltd.</span>
+                                <span class="duration">January 2022 - July 2022</span>
+                            </div>
                         </div>
                         <ul class="achievements">
                             <li>Achieved 1000x acceleration in data processing using PyMongo for direct MongoDB-to-DataFrame queries</li>
@@ -186,12 +311,17 @@
                     </div>
                 </div>
 
-                <div class="timeline-item">
+                <div class="timeline-item glass-effect" data-year="2021">
                     <div class="timeline-content">
                         <div class="timeline-header">
-                            <h3>Research Intern</h3>
-                            <span class="company">BISAG-N</span>
-                            <span class="duration">June 2021 - September 2021</span>
+                            <div class="timeline-icon">
+                                <i class="fas fa-microscope"></i>
+                            </div>
+                            <div class="timeline-info">
+                                <h3>Research Intern</h3>
+                                <span class="company">BISAG-N</span>
+                                <span class="duration">June 2021 - September 2021</span>
+                            </div>
                         </div>
                         <ul class="achievements">
                             <li>Developed ARIMA-based time series analysis achieving 20% improvement in stock market prediction accuracy</li>
@@ -207,48 +337,100 @@
     <!-- Projects Section -->
     <section id="projects" class="projects">
         <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
+            <div class="section-header">
+                <h2 class="section-title">Featured Projects</h2>
+                <div class="section-subtitle">Innovative solutions that make a difference</div>
+            </div>
             <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-header">
-                        <h3>Retail Sales Analysis & Forecasting</h3>
-                        <div class="project-tech">
-                            <span class="tech-tag">LSTM</span>
-                            <span class="tech-tag">Prophet</span>
-                            <span class="tech-tag">ARIMA</span>
-                            <span class="tech-tag">LightGBM</span>
+                <div class="project-card glass-effect" data-category="ai">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <div class="project-tech">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">TensorFlow</span>
+                                <span class="tech-tag">AWS</span>
+                            </div>
+                        </div>
+                        <div class="project-visual">
+                            <div class="project-3d-element">
+                                <div class="neural-network">
+                                    <div class="neuron"></div>
+                                    <div class="neuron"></div>
+                                    <div class="neuron"></div>
+                                    <div class="connection"></div>
+                                    <div class="connection"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <p class="project-description">
-                        Comprehensive analysis of Walmart's historical sales data using advanced ML algorithms, 
-                        achieving 15% improvement in forecast accuracy and identifying key seasonal patterns.
-                    </p>
-                    <ul class="project-highlights">
-                        <li>15% improvement in sales forecast accuracy</li>
-                        <li>8% predicted increase in sales through optimized product combinations</li>
-                        <li>Advanced seasonality analysis across product categories</li>
-                    </ul>
+                    <div class="project-content">
+                        <h3>AI-Powered Incident Response</h3>
+                        <p>Developed an intelligent system that automatically detects and responds to infrastructure incidents, reducing response time by 80%.</p>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#" class="project-link"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="project-card">
-                    <div class="project-header">
-                        <h3>DineWise Restaurant Recommendation</h3>
-                        <div class="project-tech">
-                            <span class="tech-tag">Azure</span>
-                            <span class="tech-tag">Django</span>
-                            <span class="tech-tag">NLTK</span>
-                            <span class="tech-tag">TF-IDF</span>
+                <div class="project-card glass-effect" data-category="cloud">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <div class="project-tech">
+                                <span class="tech-tag">AWS</span>
+                                <span class="tech-tag">Docker</span>
+                                <span class="tech-tag">Kubernetes</span>
+                            </div>
+                        </div>
+                        <div class="project-visual">
+                            <div class="project-3d-element">
+                                <div class="cloud-infrastructure">
+                                    <div class="server"></div>
+                                    <div class="server"></div>
+                                    <div class="server"></div>
+                                    <div class="connection-line"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <p class="project-description">
-                        Cloud-based ML recommendation system for dining experiences, featuring advanced 
-                        content-based filtering and natural language processing capabilities.
-                    </p>
-                    <ul class="project-highlights">
-                        <li>80% relevance improvement through data refinement</li>
-                        <li>40% reduction in data retrieval time</li>
-                        <li>Advanced content-based filtering with NLTK</li>
-                    </ul>
+                    <div class="project-content">
+                        <h3>Scalable Cloud Architecture</h3>
+                        <p>Designed and implemented a highly available cloud infrastructure supporting 1M+ users with 99.9% uptime.</p>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#" class="project-link"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card glass-effect" data-category="data">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <div class="project-tech">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">MongoDB</span>
+                                <span class="tech-tag">Tableau</span>
+                            </div>
+                        </div>
+                        <div class="project-visual">
+                            <div class="project-3d-element">
+                                <div class="data-visualization">
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-line"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3>Real-time Analytics Dashboard</h3>
+                        <p>Built a comprehensive analytics platform processing 10TB+ data daily with real-time visualization capabilities.</p>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#" class="project-link"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -257,70 +439,114 @@
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
-            <h2 class="section-title">Get In Touch</h2>
+            <div class="section-header">
+                <h2 class="section-title">Get In Touch</h2>
+                <div class="section-subtitle">Let's build something amazing together</div>
+            </div>
             <div class="contact-content">
-                <div class="contact-info">
-                    <h3>Let's Connect</h3>
-                    <p>I'm always interested in new opportunities and collaborations. Whether you have a question or just want to say hi, feel free to reach out!</p>
-                    
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+1 (812) 320-1480</span>
-                        </div>
-                        <div class="contact-item">
+                <div class="contact-info glass-effect">
+                    <div class="contact-item">
+                        <div class="contact-icon">
                             <i class="fas fa-envelope"></i>
-                            <span>smit.borasaniya@gmail.com</span>
                         </div>
-                        <div class="contact-item">
-                            <i class="fab fa-linkedin"></i>
-                            <a href="https://www.linkedin.com/in/smitborasaniya" target="_blank">linkedin.com/in/smitborasaniya</a>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fab fa-github"></i>
-                            <a href="https://github.com/smitborasaniya" target="_blank">github.com/smitborasaniya</a>
+                        <div class="contact-details">
+                            <h4>Email</h4>
+                            <p>smit.borasaniya@example.com</p>
                         </div>
                     </div>
-
-                    <div class="certification">
-                        <h4>AWS Certified Solutions Architect Associate</h4>
-                        <a href="https://www.credly.com/badges/fccf317d-b1c3-4c2c-a61a-7e36b043faaf/public_url" target="_blank" class="cert-link">
-                            <i class="fas fa-certificate"></i>
-                            View Credential
-                        </a>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Phone</h4>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-linkedin"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>LinkedIn</h4>
+                            <p>linkedin.com/in/smit-borasaniya</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>GitHub</h4>
+                            <p>github.com/smit53</p>
+                        </div>
                     </div>
                 </div>
-
-                <form class="contact-form" id="contactForm">
+                <form class="contact-form glass-effect">
                     <div class="form-group">
-                        <label for="name">Name</label>
                         <input type="text" id="name" name="name" required>
+                        <label for="name">Your Name</label>
+                        <div class="form-line"></div>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email</label>
                         <input type="email" id="email" name="email" required>
+                        <label for="email">Your Email</label>
+                        <div class="form-line"></div>
                     </div>
                     <div class="form-group">
-                        <label for="subject">Subject</label>
                         <input type="text" id="subject" name="subject" required>
+                        <label for="subject">Subject</label>
+                        <div class="form-line"></div>
                     </div>
                     <div class="form-group">
-                        <label for="message">Message</label>
                         <textarea id="message" name="message" rows="5" required></textarea>
+                        <label for="message">Your Message</label>
+                        <div class="form-line"></div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Send Message</button>
+                    <button type="submit" class="btn btn-primary glass-effect">
+                        <span class="btn-text">Send Message</span>
+                        <span class="btn-icon"><i class="fas fa-paper-plane"></i></span>
+                    </button>
                 </form>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer glass-effect">
         <div class="container">
-            <p>&copy; 2024 Smit Borasaniya. All rights reserved.</p>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="logo-3d-text">Smit Borasaniya</div>
+                    <p>Building the future, one line of code at a time.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#experience">Experience</a>
+                    <a href="#projects">Projects</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Smit Borasaniya. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
+    <!-- Cursor Follower -->
+    <div class="cursor-follower"></div>
+    <div class="cursor-dot"></div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
     <script src="script.js"></script>
 </body>
 </html> 
