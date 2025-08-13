@@ -3,12 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gray-50 text-gray-900;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
@@ -23,11 +19,11 @@
   }
   
   .gradient-text {
-    @apply bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
   }
   
   .gradient-bg {
-    @apply bg-gradient-to-br from-primary-500 via-secondary-500 to-accent-500;
+    @apply bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600;
   }
   
   .card-hover {
@@ -39,7 +35,7 @@
   }
   
   .glow-effect {
-    @apply shadow-lg shadow-primary-500/25;
+    @apply shadow-lg shadow-blue-500/25;
   }
 }
 
@@ -79,11 +75,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary-500 rounded-full;
+  @apply bg-blue-500 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary-600;
+  @apply bg-blue-600;
 }
 
 /* Smooth transitions for all elements */
@@ -93,10 +89,10 @@
 
 /* Focus styles */
 *:focus {
-  @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
 }
 
 /* Selection styles */
 ::selection {
-  @apply bg-primary-500 text-white;
+  @apply bg-blue-500 text-white;
 } 
