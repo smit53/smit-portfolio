@@ -4,12 +4,20 @@ export const useLoading = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate loading time
+    // Shorter loading time to prevent getting stuck
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 2000)
+    }, 1000) // Reduced from 2000ms to 1000ms
 
-    return () => clearTimeout(timer)
+    // Fallback to ensure loading doesn't get stuck
+    const fallbackTimer = setTimeout(() => {
+      setIsLoading(false)
+    }, 3000)
+
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(fallbackTimer)
+    }
   }, [])
 
   return { isLoading }

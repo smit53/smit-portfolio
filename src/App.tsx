@@ -1,4 +1,4 @@
-import { BrowserRouter as Router } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
@@ -8,16 +8,8 @@ import Projects from './components/Projects'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import InteractiveBackground from './components/InteractiveBackground'
-import LoadingScreen from './components/LoadingScreen'
-import { useLoading } from './hooks/useLoading'
 
 function App() {
-  const { isLoading } = useLoading()
-
-  if (isLoading) {
-    return <LoadingScreen />
-  }
-
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 overflow-x-hidden">
