@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { ArrowDown, Play, Code, Database, Cloud } from 'lucide-react'
+import { ArrowDown, Play, Code, Database, GraduationCap } from 'lucide-react'
 
 const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -13,10 +13,10 @@ const Hero: React.FC = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   const stats = [
-    { number: 5, label: 'Years Experience', icon: Play },
-    { number: 50, label: 'Projects Completed', icon: Code },
-    { number: 99, label: '% Uptime', icon: Cloud },
-    { number: 10, label: 'Technologies', icon: Database }
+    { number: 2, label: 'Years Experience', icon: Play },
+    { number: 15, label: 'Projects Completed', icon: Code },
+    { number: 3.85, label: 'GPA (Masters)', icon: GraduationCap },
+    { number: 20, label: 'Technologies', icon: Database }
   ]
 
   return (
@@ -64,7 +64,7 @@ const Hero: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
-          Available for Opportunities
+          Software Development Engineer at Intuit
         </motion.div>
 
         {/* Main Heading */}
@@ -74,10 +74,10 @@ const Hero: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <span className="block">Software Development</span>
-          <span className="block gradient-text">Engineer</span>
+          <span className="block">Smit Borasaniya</span>
+          <span className="block gradient-text">Software Engineer</span>
           <span className="block text-3xl md:text-4xl text-gray-600 mt-4">
-            Building the Future
+            Cloud Infrastructure & ML Solutions
           </span>
         </motion.h1>
 
@@ -88,8 +88,9 @@ const Hero: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          Passionate about cloud infrastructure, machine learning, and creating 
-          scalable solutions that drive innovation and transform businesses.
+          Master's in Computer Science graduate from Indiana University with expertise in 
+          cloud infrastructure, machine learning, and scalable solutions. Currently working at Intuit 
+          building innovative AI-powered applications.
         </motion.p>
 
         {/* Stats */}
@@ -112,7 +113,7 @@ const Hero: React.FC = () => {
                 <stat.icon className="w-8 h-8 text-primary-500" />
               </div>
               <div className="text-3xl font-bold text-gray-900 mb-1">
-                {stat.number}+
+                {stat.number}{stat.label.includes('GPA') ? '' : '+'}
               </div>
               <div className="text-sm text-gray-600">{stat.label}</div>
             </motion.div>
