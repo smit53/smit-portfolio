@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
 
 const InteractiveBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -97,39 +96,6 @@ const InteractiveBackground: React.FC = () => {
         ref={canvasRef}
         className="w-full h-full"
       />
-      
-      {/* Floating elements */}
-      <motion.div
-        className="absolute top-20 left-20 text-4xl"
-        animate={{ y: [-10, 10, -10] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      >
-        🚀
-      </motion.div>
-      
-      <motion.div
-        className="absolute top-40 right-32 text-3xl"
-        animate={{ y: [10, -10, 10] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        ⚡
-      </motion.div>
-      
-      <motion.div
-        className="absolute bottom-32 left-1/3 text-3xl"
-        animate={{ y: [-5, 15, -5] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      >
-        💻
-      </motion.div>
-      
-      <motion.div
-        className="absolute bottom-20 right-20 text-4xl"
-        animate={{ y: [15, -5, 15] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        🎯
-      </motion.div>
     </div>
   )
 }
