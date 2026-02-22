@@ -4,7 +4,7 @@ export const SECTIONS = ['home', 'interests', 'capabilities', 'work-ethic', 'wor
 export type SectionId = (typeof SECTIONS)[number]
 
 interface ScrollContextType {
-  scrollRef: React.RefObject<HTMLMainElement | null>
+  scrollRef: React.RefObject<HTMLElement | null>
   currentSection: SectionId
   scrollToSection: (id: SectionId) => void
 }
@@ -12,7 +12,7 @@ interface ScrollContextType {
 const ScrollContext = createContext<ScrollContextType | null>(null)
 
 export function ScrollProvider({ children }: { children: React.ReactNode }) {
-  const scrollRef = useRef<HTMLMainElement>(null)
+  const scrollRef = useRef<HTMLElement>(null)
   const [currentSection, setCurrentSection] = useState<SectionId>('home')
 
   const scrollToSection = useCallback((id: SectionId) => {

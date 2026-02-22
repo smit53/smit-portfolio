@@ -38,7 +38,7 @@ function PortfolioContent() {
             <SectionProgress />
             <ScrollProgress />
             <main
-              ref={scrollRef}
+              ref={scrollRef as React.LegacyRef<HTMLElement>}
               className="flex-1 overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth"
             >
               <section id="home" className="min-h-screen snap-start flex flex-col items-center justify-center py-24 px-6 sm:px-12 lg:px-24">
