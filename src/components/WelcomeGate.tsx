@@ -19,9 +19,9 @@ const WelcomeGate: React.FC<WelcomeGateProps> = ({ onEnter }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950 overflow-x-hidden">
-      {/* Ambient background */}
-      <div className="absolute inset-0">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950 overflow-visible">
+      {/* Ambient background - contained so it doesn't cause scroll */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_100%_at_50%_50%,rgba(250,204,21,0.03),transparent_60%)]" />
         <div className="absolute top-1/4 left-1/2 w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/[0.02] blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-amber-400/[0.02] blur-3xl" />
@@ -31,7 +31,7 @@ const WelcomeGate: React.FC<WelcomeGateProps> = ({ onEnter }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 w-full max-w-lg px-8 pb-6"
+        className="relative z-10 w-full max-w-lg px-8 pb-6 overflow-visible"
       >
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -48,9 +48,12 @@ const WelcomeGate: React.FC<WelcomeGateProps> = ({ onEnter }) => {
             <Sparkles className="w-4 h-4" strokeWidth={1.5} />
             Welcome
           </motion.div>
-          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-zinc-100 tracking-tight mb-4 overflow-visible" style={{ lineHeight: 1.4, paddingBottom: '0.2em' }}>
-            I'm glad you're here
-          </h1>
+          {/* Wrapper reserves space for descenders (e.g. g, y) so they are never clipped */}
+          <div className="overflow-visible mb-4" style={{ paddingBottom: '0.45em' }}>
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-zinc-100 tracking-tight overflow-visible" style={{ lineHeight: 1.5 }}>
+              I'm glad you're here
+            </h1>
+          </div>
           <p className="text-zinc-500 text-lg max-w-sm mx-auto">
             What should I call you?
           </p>
