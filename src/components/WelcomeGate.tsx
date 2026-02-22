@@ -19,7 +19,7 @@ const WelcomeGate: React.FC<WelcomeGateProps> = ({ onEnter }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950 overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950 overflow-x-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_100%_at_50%_50%,rgba(250,204,21,0.03),transparent_60%)]" />
@@ -31,13 +31,13 @@ const WelcomeGate: React.FC<WelcomeGateProps> = ({ onEnter }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 w-full max-w-lg px-8"
+        className="relative z-10 w-full max-w-lg px-8 pb-6"
       >
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-12"
+          className="text-center mb-12 overflow-visible"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -48,11 +48,11 @@ const WelcomeGate: React.FC<WelcomeGateProps> = ({ onEnter }) => {
             <Sparkles className="w-4 h-4" strokeWidth={1.5} />
             Welcome
           </motion.div>
-          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-zinc-100 tracking-tight mb-4 leading-tight">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-zinc-100 tracking-tight mb-4 overflow-visible" style={{ lineHeight: 1.4, paddingBottom: '0.2em' }}>
             I'm glad you're here
           </h1>
           <p className="text-zinc-500 text-lg max-w-sm mx-auto">
-            Before we begin — I'd love to know who I'm sharing this with.
+            What should I call you?
           </p>
         </motion.div>
 

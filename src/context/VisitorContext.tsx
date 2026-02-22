@@ -15,7 +15,7 @@ export function VisitorProvider({ children }: { children: React.ReactNode }) {
   const [hasVisited, setHasVisited] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem(VISITOR_KEY)
+    const stored = sessionStorage.getItem(VISITOR_KEY)
     if (stored?.trim()) {
       setVisitorNameState(stored.trim())
       setHasVisited(true)
@@ -25,7 +25,7 @@ export function VisitorProvider({ children }: { children: React.ReactNode }) {
   const setVisitorName = (name: string) => {
     const trimmed = name.trim()
     if (trimmed) {
-      localStorage.setItem(VISITOR_KEY, trimmed)
+      sessionStorage.setItem(VISITOR_KEY, trimmed)
       setVisitorNameState(trimmed)
       setHasVisited(true)
     }

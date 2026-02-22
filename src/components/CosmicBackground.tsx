@@ -58,10 +58,28 @@ const CosmicBackground: React.FC = () => {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-zinc-950 to-zinc-950" />
+      {/* Subtle animated gradient orbs */}
+      <div className="absolute inset-0 opacity-40">
+        <div className="absolute top-[10%] left-[20%] w-[40vmax] h-[40vmax] rounded-full bg-amber-500/[0.04] blur-[80px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute top-[60%] right-[10%] w-[30vmax] h-[30vmax] rounded-full bg-amber-400/[0.03] blur-[60px] animate-pulse" style={{ animationDuration: '10s', animationDelay: '1s' }} />
+        <div className="absolute bottom-[20%] left-[40%] w-[25vmax] h-[25vmax] rounded-full bg-orange-500/[0.03] blur-[50px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+      </div>
+      {/* Soft grid */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(250,204,21,0.5) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(250,204,21,0.5) 1px, transparent 1px)
+          `,
+          backgroundSize: '48px 48px',
+        }}
+      />
       <motion.div style={{ opacity: starOpacity }} className="absolute inset-0">
         <canvas ref={canvasRef} className="w-full h-full" />
       </motion.div>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(250,204,21,0.08),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_80%_80%,rgba(250,204,21,0.04),transparent)]" />
     </div>
   )
 }
