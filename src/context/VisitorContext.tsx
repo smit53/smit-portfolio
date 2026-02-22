@@ -1,6 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
-
-const VISITOR_KEY = 'portfolio-visitor-name'
+import { createContext, useContext, useState } from 'react'
 
 interface VisitorContextType {
   visitorName: string | null
@@ -14,18 +12,9 @@ export function VisitorProvider({ children }: { children: React.ReactNode }) {
   const [visitorName, setVisitorNameState] = useState<string | null>(null)
   const [hasVisited, setHasVisited] = useState(false)
 
-  useEffect(() => {
-    const stored = sessionStorage.getItem(VISITOR_KEY)
-    if (stored?.trim()) {
-      setVisitorNameState(stored.trim())
-      setHasVisited(true)
-    }
-  }, [])
-
   const setVisitorName = (name: string) => {
     const trimmed = name.trim()
     if (trimmed) {
-      sessionStorage.setItem(VISITOR_KEY, trimmed)
       setVisitorNameState(trimmed)
       setHasVisited(true)
     }

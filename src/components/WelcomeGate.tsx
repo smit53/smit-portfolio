@@ -19,7 +19,7 @@ const WelcomeGate: React.FC<WelcomeGateProps> = ({ onEnter }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950 overflow-visible">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950 overflow-visible pb-[20px]" style={{ boxSizing: 'border-box' }}>
       {/* Ambient background - contained so it doesn't cause scroll */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_100%_at_50%_50%,rgba(250,204,21,0.03),transparent_60%)]" />
@@ -48,9 +48,12 @@ const WelcomeGate: React.FC<WelcomeGateProps> = ({ onEnter }) => {
             <Sparkles className="w-4 h-4" strokeWidth={1.5} />
             Welcome
           </motion.div>
-          {/* Wrapper reserves space for descenders (e.g. g, y) so they are never clipped */}
-          <div className="overflow-visible mb-4" style={{ paddingBottom: '0.45em' }}>
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-zinc-100 tracking-tight overflow-visible" style={{ lineHeight: 1.5 }}>
+          {/* Reserve space for descenders (g, y) so the bottom of letters is never clipped */}
+          <div className="mb-4" style={{ paddingBottom: 20, overflow: 'visible' }}>
+            <h1
+              className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-zinc-100 tracking-tight"
+              style={{ lineHeight: 1.6, overflow: 'visible', display: 'block' }}
+            >
               I'm glad you're here
             </h1>
           </div>

@@ -6,8 +6,8 @@ const categories = [
   { label: 'Infrastructure & Cloud', items: ['AWS', 'Azure', 'Kubernetes', 'Docker', 'Argo CD', 'CI/CD', 'Jenkins'] },
   { label: 'Data & ML', items: ['TensorFlow', 'MLflow', 'Airflow', 'MongoDB', 'PostgreSQL', 'Neo4j', 'Cassandra', 'MySQL'] },
   { label: 'Observability & Ops', items: ['Prometheus', 'Grafana', 'Wavefront', 'Splunk', 'Datadog', 'PagerDuty', 'JIRA'] },
-  { label: 'Analytics & BI', items: ['Tableau', 'Power BI', 'Qlik Sense'] },
   { label: 'Tools & Practices', items: ['Playwright', 'GitLab', 'REST API', 'Redis'] },
+  { label: 'Analytics & BI', items: ['Tableau', 'Power BI', 'Qlik Sense'] },
 ]
 
 const Capabilities: React.FC = () => {
