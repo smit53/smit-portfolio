@@ -3,6 +3,14 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
+// Clear any stored visitor state on every load so any refresh shows the welcome gate again
+const VISITOR_STORAGE_KEY = 'portfolio-visitor-name'
+try {
+  localStorage.removeItem(VISITOR_STORAGE_KEY)
+  sessionStorage.removeItem(VISITOR_STORAGE_KEY)
+  document.cookie = `${VISITOR_STORAGE_KEY}=; path=/; max-age=0`
+} catch (_) { /* ignore */ }
+
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean; error: Error | null }

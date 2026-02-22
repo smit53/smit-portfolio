@@ -48,10 +48,10 @@ const WelcomeGate: React.FC<WelcomeGateProps> = ({ onEnter }) => {
             <Sparkles className="w-4 h-4" strokeWidth={1.5} />
             Welcome
           </motion.div>
-          {/* Reserve space for descenders (g, y) so the bottom of letters is never clipped */}
+          {/* No font-display here — it was clipping descenders (g, y). Use body font. */}
           <div className="mb-4" style={{ paddingBottom: 20, overflow: 'visible' }}>
             <h1
-              className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-zinc-100 tracking-tight"
+              className="text-3xl sm:text-4xl md:text-5xl font-semibold text-zinc-100 tracking-tight"
               style={{ lineHeight: 1.6, overflow: 'visible', display: 'block' }}
             >
               I'm glad you're here
