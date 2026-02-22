@@ -1,160 +1,44 @@
-import React, { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { ArrowDown, Play, Code, Database, GraduationCap } from 'lucide-react'
+import { motion } from 'framer-motion'
+import RotatingPhrase from './RotatingPhrase'
 
-const Hero: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  })
+interface HeroProps {
+  visitorName: string | null
+}
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-
-  const stats = [
-    { number: 2, label: 'Years Experience', icon: Play },
-    { number: 15, label: 'Projects Completed', icon: Code },
-    { number: 3.85, label: 'GPA (Masters)', icon: GraduationCap },
-    { number: 20, label: 'Technologies', icon: Database }
-  ]
-
+const Hero: React.FC<HeroProps> = ({ visitorName }) => {
   return (
-    <section id="home" ref={containerRef} className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
-      {/* Background Elements */}
+    <div className="relative z-10 w-full flex flex-col items-center">
+      {/* Welcome - centered */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"
-        style={{ y, opacity }}
-      />
-      
-      {/* Floating Shapes */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute top-20 left-20 w-32 h-32 bg-primary-200 rounded-full opacity-20"
-          animate={{ 
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute top-40 right-32 w-24 h-24 bg-secondary-200 rounded-full opacity-20"
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0]
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute bottom-32 left-1/3 w-20 h-20 bg-accent-200 rounded-full opacity-20"
-          animate={{ 
-            scale: [1, 1.3, 1],
-            rotate: [0, 360, 0]
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full flex justify-center mb-24 sm:mb-32"
+      >
+        <p className="text-zinc-400 text-2xl sm:text-3xl leading-relaxed tracking-tight text-center">
+          Welcome{visitorName ? `, ${visitorName}` : ''}. It's nice to connect with you.
+        </p>
+      </motion.div>
 
-      <div className="relative z-10 max-w-7xl mx-auto text-center">
-        {/* Badge */}
-        <motion.div
-          className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-full text-sm font-medium mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
-          Software Development Engineer at Intuit
-        </motion.div>
-
-        {/* Main Heading */}
-        <motion.div
-          className="mb-6"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-4 leading-tight">
-            Smit Borasaniya
-          </h1>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4 leading-tight">
-            Software Engineer
-          </h2>
-          <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-600 leading-tight">
-            Cloud Infrastructure & ML Solutions
-          </h3>
-        </motion.div>
-
-        {/* Subtitle */}
-        <motion.p
-          className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed px-4"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          Master's in Computer Science graduate from Indiana University with expertise in 
-          cloud infrastructure, machine learning, and scalable solutions. Currently working at Intuit 
-          building innovative AI-powered applications.
-        </motion.p>
-
-        {/* Stats */}
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-12 px-4"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              className="text-center"
-              whileHover={{ scale: 1.05 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
-            >
-              <div className="flex justify-center mb-2">
-                <stat.icon className="w-6 h-6 md:w-8 md:h-8 text-primary-500" />
-              </div>
-              <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
-                {stat.number}{stat.label.includes('GPA') ? '' : '+'}
-              </div>
-              <div className="text-xs md:text-sm text-gray-600 leading-tight">
-                {stat.label}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* CTA Buttons */}
-        <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-        >
-          <motion.button
-            className="px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-full font-semibold text-base md:text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            Get In Touch
-            <ArrowDown className="w-4 h-4 md:w-5 md:h-5" />
-          </motion.button>
-          
-          <motion.button
-            className="px-6 md:px-8 py-3 md:py-4 border-2 border-primary-500 text-primary-500 rounded-full font-semibold text-base md:text-lg hover:bg-primary-500 hover:text-white transition-all duration-300"
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            View Projects
-          </motion.button>
-        </motion.div>
-      </div>
-    </section>
+      {/* Content - 3 lines with generous spacing */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-5xl self-start space-y-4"
+      >
+        <p className="text-zinc-500 text-xl sm:text-2xl leading-relaxed">
+          I build AI-powered solutions at Intuit, where elegance meets scale.
+        </p>
+        <p className="text-zinc-500 text-xl sm:text-2xl leading-relaxed">
+          I believe in clean code, thoughtful design, and systems that grow with care.
+        </p>
+        <p className="text-zinc-500 text-xl sm:text-2xl leading-relaxed">
+          When I'm not shipping features, I'm exploring new tech, traveling, or diving into <RotatingPhrase />.
+        </p>
+      </motion.div>
+    </div>
   )
 }
 
-export default Hero 
+export default Hero

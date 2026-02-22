@@ -4,95 +4,52 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-zinc-950 text-zinc-100 antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  html {
-    scroll-behavior: smooth;
+  html, body {
+    overflow: hidden;
   }
 }
 
 @layer components {
-  .glass-effect {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+  .section-padding {
+    @apply py-20 md:py-28 lg:py-32 px-4 sm:px-6 lg:px-8;
   }
   
-  .gradient-text {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
-  }
-  
-  .gradient-bg {
-    @apply bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600;
-  }
-  
-  .card-hover {
-    @apply transition-all duration-300 hover:scale-105 hover:shadow-2xl;
-  }
-  
-  .text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .glow-effect {
-    @apply shadow-lg shadow-blue-500/25;
+  .text-balance {
+    text-wrap: balance;
   }
 }
 
 @layer utilities {
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+  .text-gradient {
+    @apply bg-gradient-to-r from-zinc-200 via-zinc-100 to-zinc-300 bg-clip-text text-transparent;
   }
   
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-  
-  .animate-slide-up {
-    animation: slideUp 0.5s ease-out;
-  }
-  
-  .animate-slide-down {
-    animation: slideDown 0.5s ease-out;
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
-  }
-  
-  .animate-scale-in {
-    animation: scaleIn 0.3s ease-out;
+  .text-gradient-accent {
+    @apply bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 bg-clip-text text-transparent;
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - dark theme */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  @apply bg-zinc-900;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-blue-500 rounded-full;
+  @apply bg-zinc-600 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-blue-600;
+  @apply bg-zinc-500;
 }
 
-/* Smooth transitions for all elements */
-* {
-  transition: all 0.2s ease-in-out;
-}
-
-/* Focus styles */
-*:focus {
-  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
-}
-
-/* Selection styles */
 ::selection {
-  @apply bg-blue-500 text-white;
-} 
+  @apply bg-amber-500/30 text-white;
+}
