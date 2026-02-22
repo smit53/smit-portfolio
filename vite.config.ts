@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/smit-portfolio/', // <-- This is required for GitHub Pages
+  base: './', // Relative base so script/assets load correctly on GitHub Pages (avoids MIME/404)
   server: {
     port: 3000,
     open: true
