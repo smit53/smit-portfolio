@@ -1,24 +1,24 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
-import { useSection } from '../context/SectionContext'
-import { SECTIONS } from '../context/SectionContext'
+import { useScroll } from '../context/ScrollContext'
+import { SECTIONS } from '../context/ScrollContext'
 
 const navItems: { name: string; id: (typeof SECTIONS)[number] }[] = [
   { name: 'Home', id: 'home' },
   { name: 'Interests', id: 'interests' },
   { name: 'Capabilities', id: 'capabilities' },
-  { name: 'Work Ethic', id: 'work-ethic' },
+  { name: 'How I work', id: 'work-ethic' },
   { name: 'Work', id: 'work' },
   { name: 'Keep in Touch', id: 'contact' },
 ]
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { activeSection, setActiveSection } = useSection()
+  const { currentSection, scrollToSection } = useScroll()
 
-  const handleNav = (id: typeof activeSection) => {
-    setActiveSection(id)
+  const handleNav = (id: (typeof SECTIONS)[number]) => {
+    scrollToSection(id)
     setIsOpen(false)
   }
 
@@ -32,7 +32,7 @@ const Navbar: React.FC = () => {
                 key={item.id}
                 onClick={() => handleNav(item.id)}
                 className={`text-[13px] tracking-wide transition-colors duration-300 ${
-                  activeSection === item.id ? 'text-zinc-100' : 'text-zinc-500 hover:text-zinc-100'
+                  currentSection === item.id ? 'text-zinc-100' : 'text-zinc-500 hover:text-zinc-100'
                 }`}
               >
                 {item.name}
@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
                   key={item.id}
                   onClick={() => handleNav(item.id)}
                   className={`block w-full text-left py-3 transition-colors ${
-                    activeSection === item.id ? 'text-zinc-100' : 'text-zinc-400 hover:text-zinc-100'
+                    currentSection === item.id ? 'text-zinc-100' : 'text-zinc-400 hover:text-zinc-100'
                   }`}
                 >
                   {item.name}

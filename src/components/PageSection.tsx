@@ -9,17 +9,12 @@ interface PageSectionProps {
 
 const PageSection: React.FC<PageSectionProps> = ({ id, title, subtitle, children }) => {
   return (
-    <motion.section
+    <section
       id={id}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="h-full min-h-0 flex flex-col items-center justify-center py-24 px-6 sm:px-12 lg:px-24 overflow-y-auto"
+      className="min-h-screen snap-start flex flex-col items-center py-24 px-6 sm:px-12 lg:px-24"
     >
-      <div className="w-full max-w-5xl flex flex-col items-center">
-        {/* Centered title - like Hero welcome */}
-        <div className="w-full flex justify-center mb-16 sm:mb-20">
+      <div className="w-full max-w-5xl flex flex-col items-center flex-1">
+        <div className="w-full flex justify-center mb-12 sm:mb-16 shrink-0">
           <div className="text-center">
             <h2 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-100">
               {title}
@@ -29,12 +24,11 @@ const PageSection: React.FC<PageSectionProps> = ({ id, title, subtitle, children
             )}
           </div>
         </div>
-        {/* Left-aligned content */}
-        <div className="w-full max-w-5xl self-start">
+        <div className="w-full max-w-5xl self-start min-h-0 pb-12">
           {children}
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }
 

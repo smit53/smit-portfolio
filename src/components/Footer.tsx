@@ -1,6 +1,6 @@
 const Footer: React.FC = () => {
   return (
-    <footer className="shrink-0 border-t border-zinc-800/50 py-4 px-6">
+    <footer className="shrink-0 border-t border-zinc-800/50 py-8 px-6 min-h-[12vh] flex items-center">
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
         <p className="text-zinc-600 text-xs">© {new Date().getFullYear()} Smit Borasaniya</p>
         <div className="flex gap-6">
