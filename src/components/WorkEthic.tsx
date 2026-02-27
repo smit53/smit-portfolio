@@ -1,57 +1,111 @@
-import { motion } from 'framer-motion'
-import { Target, Zap, Heart, Compass, Shield } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Target, RefreshCw, Users, Zap, Shield, type LucideIcon } from 'lucide-react'
+import { useTextScramble } from '../hooks/useTextScramble'
 
-const principles = [
-  {
-    icon: Target,
-    title: 'Focus on impact',
-    description: 'I prioritize work that moves the needle. Clear goals, lean execution, and measurable outcomes. I ask "what changes if we ship this?" before diving in.',
-  },
-  {
-    icon: Zap,
-    title: 'Ship iteratively',
-    description: 'Done is better than perfect. I ship often, gather feedback, and improve continuously. Small, testable steps beat big-bang releases.',
-  },
-  {
-    icon: Heart,
-    title: 'Collaborate with care',
-    description: 'Strong ideas, loosely held. I listen first, disagree thoughtfully, and build trust. I assume good intent and give credit where it\'s due.',
-  },
-  {
-    icon: Compass,
-    title: 'Default to action',
-    description: 'When something\'s unclear or blocked, I try the smallest useful step instead of waiting. Experiments and prototypes often unblock faster than long discussions.',
-  },
-  {
-    icon: Shield,
-    title: 'Own reliability & security',
-    description: 'I treat on-call, incident response, and security as part of the job. Reliable systems and safe practices are non-negotiable—I document, automate, and improve them.',
-  },
+const principles: {
+  word: string
+  description: string
+  image?: string
+  Icon: LucideIcon
+}[] = [
+  { word: 'IMPACT', description: 'I prioritize work that moves the needle. Clear goals, lean execution, measurable outcomes. I ask "what changes if we ship this?" before diving in.', Icon: Target },
+  { word: 'ITERATIONS', description: 'Done is better than perfect. I ship often, gather feedback, improve continuously. Small, testable steps beat big-bang releases.', Icon: RefreshCw },
+  { word: 'COLLABORATE', description: 'Strong ideas, loosely held. I listen first, disagree thoughtfully, build trust. I assume good intent and give credit where it\'s due.', Icon: Users },
+  { word: 'ACTION', description: 'When something\'s unclear or blocked, I try the smallest useful step instead of waiting. Experiments and prototypes often unblock faster than long discussions.', Icon: Zap },
+  { word: 'RELIABILITY', description: 'I treat on-call, incident response, and security as part of the job. Reliable systems and safe practices are non-negotiable—I document, automate, and improve them.', Icon: Shield },
 ]
 
-const WorkEthic: React.FC = () => {
+function HoverReveal({
+  word,
+  description,
+  image,
+  Icon,
+  isActive,
+  onHover,
+  onLeave,
+}: {
+  word: string
+  description: string
+  image?: string
+  Icon: LucideIcon
+  isActive: boolean
+  onHover: () => void
+  onLeave: () => void
+}) {
+  const { displayText } = useTextScramble({ text: description, trigger: isActive, speed: 12, scrambleWidth: 3 })
   return (
-    <div className="space-y-8">
-      <p className="text-zinc-500 text-base leading-relaxed max-w-2xl">
-        How I show up day to day: the principles I lean on when making decisions and working with others.
+    <motion.div
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      className="group flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-4 sm:py-6 border-b border-zinc-200 dark:border-zinc-700 last:border-0 cursor-default"
+      initial={{ opacity: 0, x: -24 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.4 }}
+      style={{ transformPerspective: 800 }}
+      whileHover={{ rotateY: 8, rotateX: -2, z: 4, scale: 1.02 }}
+    >
+      {/* Image/visual area per principle */}
+      <motion.div
+        className="shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-zinc-200/80 dark:border-zinc-600 bg-gradient-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-700/80 flex items-center justify-center"
+        style={{ transformPerspective: 800 }}
+        whileHover={{ rotateY: 6, rotateX: -4, z: 8 }}
+      >
+        {image ? (
+          <img src={image} alt="" className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-brand-500/5 dark:bg-brand-500/15 group-hover:bg-brand-500/10 dark:group-hover:bg-brand-500/20 transition-colors">
+            <Icon className="w-10 h-10 sm:w-12 sm:h-12 text-brand-500/70 dark:text-brand-400/80" strokeWidth={1.5} />
+          </div>
+        )}
+      </motion.div>
+      <div className="flex-1 min-w-0">
+        <span
+          className={`font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tighter shrink-0 transition-colors duration-300 block ${
+            isActive ? 'text-brand-500 dark:text-brand-400' : 'text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-700 dark:group-hover:text-zinc-300'
+          }`}
+          style={{ lineHeight: 0.9, letterSpacing: '-0.02em' }}
+        >
+          {word}
+        </span>
+        <AnimatePresence mode="wait">
+          {isActive && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="text-zinc-600 dark:text-zinc-400 text-base sm:text-lg leading-relaxed max-w-xl pt-1 sm:pt-2"
+            >
+              {displayText}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  )
+}
+
+const WorkEthic: React.FC = () => {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+
+  return (
+    <div className="space-y-2">
+      <p className="text-zinc-500 dark:text-zinc-400 text-sm uppercase tracking-widest mb-10 max-w-xl">
+        How I show up day to day — principles I lean on.
       </p>
-      <div className="space-y-6">
+      <div className="flex flex-col">
         {principles.map((item, index) => (
-          <motion.div
-            key={item.title}
-            initial={{ opacity: 0, x: -16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="flex gap-6 items-start py-6 border-b border-zinc-800/50 last:border-0"
-          >
-            <div className="shrink-0 w-12 h-12 rounded-2xl bg-zinc-800/80 flex items-center justify-center text-amber-400/90">
-              <item.icon className="w-6 h-6" strokeWidth={1.5} />
-            </div>
-            <div>
-              <h3 className="font-medium text-zinc-100 text-lg mb-2">{item.title}</h3>
-              <p className="text-zinc-500 leading-relaxed">{item.description}</p>
-            </div>
-          </motion.div>
+          <HoverReveal
+            key={item.word}
+            word={item.word}
+            description={item.description}
+            image={item.image}
+            Icon={item.Icon}
+            isActive={activeIndex === index}
+            onHover={() => setActiveIndex(index)}
+            onLeave={() => setActiveIndex(null)}
+          />
         ))}
       </div>
     </div>

@@ -31,7 +31,7 @@ const RotatingPhrase: React.FC = () => {
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           exit={{ opacity: 0, y: -4, filter: 'blur(4px)' }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="inline text-amber-400/90 font-medium italic underline decoration-amber-500/30 decoration-2 underline-offset-2"
+          className="inline text-brand-500 dark:text-brand-400 font-medium italic underline decoration-brand-500/40 dark:decoration-brand-400/50 decoration-2 underline-offset-2"
         >
           {PHRASES[index]}
         </motion.span>

@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
-import { useScroll } from '../context/ScrollContext'
-import { SECTIONS } from '../context/ScrollContext'
+import { useSection, SECTIONS } from '../context/SectionContext'
 
 const navItems: { name: string; id: (typeof SECTIONS)[number] }[] = [
   { name: 'Home', id: 'home' },
@@ -15,7 +14,7 @@ const navItems: { name: string; id: (typeof SECTIONS)[number] }[] = [
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { currentSection, scrollToSection } = useScroll()
+  const { currentSection, scrollToSection } = useSection()
 
   const handleNav = (id: (typeof SECTIONS)[number]) => {
     scrollToSection(id)
@@ -23,7 +22,7 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/70 backdrop-blur-xl border-b border-zinc-800/40">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-zinc-200/80">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-end md:justify-center items-center h-16 md:h-20 relative">
           <div className="hidden md:flex items-center justify-center gap-10">
@@ -32,7 +31,7 @@ const Navbar: React.FC = () => {
                 key={item.id}
                 onClick={() => handleNav(item.id)}
                 className={`text-[13px] tracking-wide transition-colors duration-300 ${
-                  currentSection === item.id ? 'text-zinc-100' : 'text-zinc-500 hover:text-zinc-100'
+                  currentSection === item.id ? 'text-zinc-900' : 'text-zinc-600 hover:text-zinc-900'
                 }`}
               >
                 {item.name}
@@ -42,7 +41,7 @@ const Navbar: React.FC = () => {
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-zinc-400 hover:text-zinc-100 transition-colors"
+            className="md:hidden p-2 text-zinc-600 hover:text-zinc-900 transition-colors"
           >
             {isOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -56,7 +55,7 @@ const Navbar: React.FC = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden overflow-hidden border-b border-zinc-800/50 bg-zinc-950/95 backdrop-blur-xl"
+            className="md:hidden overflow-hidden border-b border-zinc-200 bg-white/95 backdrop-blur-xl"
           >
             <div className="px-4 py-4 space-y-1">
               {navItems.map((item) => (
@@ -64,7 +63,7 @@ const Navbar: React.FC = () => {
                   key={item.id}
                   onClick={() => handleNav(item.id)}
                   className={`block w-full text-left py-3 transition-colors ${
-                    currentSection === item.id ? 'text-zinc-100' : 'text-zinc-400 hover:text-zinc-100'
+                    currentSection === item.id ? 'text-zinc-900' : 'text-zinc-600 hover:text-zinc-900'
                   }`}
                 >
                   {item.name}
