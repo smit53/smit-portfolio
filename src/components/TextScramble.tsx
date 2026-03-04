@@ -8,6 +8,7 @@ interface TextScrambleProps {
   className?: string
   delay?: number
   speed?: number
+  scrambleWidth?: number
   triggerOnMount?: boolean
   onComplete?: () => void
 }
@@ -18,6 +19,7 @@ const TextScramble: React.FC<TextScrambleProps> = ({
   className = '',
   delay = 0,
   speed = 30,
+  scrambleWidth = 4,
   triggerOnMount = false,
   onComplete,
 }) => {
@@ -46,7 +48,7 @@ const TextScramble: React.FC<TextScrambleProps> = ({
 
   const actualTrigger = triggerOnMount ? (delay > 0 ? triggered : startRef !== false) : triggered
 
-  const { displayText } = useTextScramble({ text, trigger: actualTrigger, speed, onComplete })
+  const { displayText } = useTextScramble({ text, trigger: actualTrigger, speed, scrambleWidth, onComplete })
 
   return (
     <Tag ref={!triggerOnMount ? ref : undefined} className={className}>

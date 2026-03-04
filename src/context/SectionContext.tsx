@@ -1,32 +1,43 @@
-import { createContext, useContext, useRef, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback } from 'react'
 
 export const SECTIONS = ['home', 'interests', 'capabilities', 'work-ethic', 'work', 'contact'] as const
 export type SectionId = (typeof SECTIONS)[number]
 
 interface SectionContextType {
-  scrollRef: React.RefObject<HTMLElement | null>
   currentSection: SectionId
   setSection: (id: SectionId) => void
   scrollToSection: (id: SectionId) => void
+  goToNextSection: () => void
+  goToPrevSection: () => void
 }
 
 const SectionContext = createContext<SectionContextType | null>(null)
 
 export function SectionProvider({ children }: { children: React.ReactNode }) {
-  const scrollRef = useRef<HTMLElement>(null)
   const [currentSection, setCurrentSection] = useState<SectionId>('home')
 
   const scrollToSection = useCallback((id: SectionId) => {
-    const index = SECTIONS.indexOf(id)
-    if (index >= 0 && scrollRef.current) {
-      const h = scrollRef.current.clientHeight
-      scrollRef.current.scrollTo({ top: index * h, behavior: 'smooth' })
-    }
     setCurrentSection(id)
   }, [])
 
+  const goToNextSection = useCallback(() => {
+    setCurrentSection((current) => {
+      const index = SECTIONS.indexOf(current)
+      const nextIndex = index < SECTIONS.length - 1 ? index + 1 : 0
+      return SECTIONS[nextIndex]
+    })
+  }, [])
+
+  const goToPrevSection = useCallback(() => {
+    setCurrentSection((current) => {
+      const index = SECTIONS.indexOf(current)
+      const prevIndex = index > 0 ? index - 1 : SECTIONS.length - 1
+      return SECTIONS[prevIndex]
+    })
+  }, [])
+
   return (
-    <SectionContext.Provider value={{ scrollRef, currentSection, setSection: setCurrentSection, scrollToSection }}>
+    <SectionContext.Provider value={{ currentSection, setSection: setCurrentSection, scrollToSection, goToNextSection, goToPrevSection }}>
       {children}
     </SectionContext.Provider>
   )

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Briefcase, Layers, BarChart3 } from 'lucide-react'
-import InfraFlow, { FlowConfig } from './InfraFlow'
+import { BarChart3 } from 'lucide-react'
+import InfraFlow, { type FlowConfig } from './InfraFlow'
 
 const workItems = [
   {
@@ -13,12 +13,8 @@ const workItems = [
       'Playwright automations to test AI agents on QuickBooks',
       'Incident prevention using AI on Prometheus and CloudWatch metrics',
       'Environment drift reporting utility for microservices analytics',
-      'Automated thread-dump capture across pods for debugging',
       'On-call support for QuickBooks Time and Payroll infrastructure',
-      'Remediated security vulnerabilities per Intuit standards',
-      'MySQL database cost footprint reduction via application vulnerability analysis',
-      'CI/CD pipelines for infrastructure changes, deployments, rollbacks, and disaster recovery',
-      'Responded to incidents from preventing production outages to resolving system anomalies',
+      'CI/CD pipelines for infrastructure, deployments, rollbacks, and disaster recovery',
     ],
   },
   {
@@ -27,9 +23,8 @@ const workItems = [
     location: 'Bloomington, IN',
     period: 'June 2023 – May 2024',
     highlights: [
-      'Tableau dashboards using user data → 35% increase in user engagement',
+      'Tableau dashboards → 35% increase in user engagement',
       'Revamped social media outreach → quadrupled service in 4 months',
-      'Reports for service expansion with IDS and Auxiliary services; mass and targeted campaigns',
     ],
   },
   {
@@ -38,9 +33,8 @@ const workItems = [
     location: 'Gandhinagar, India',
     period: 'January 2022 – July 2022',
     highlights: [
-      '1000x data cleaning speedup with Pymongo (MongoDB → DataFrame in Python)',
-      'Dashboard migration from SISENSE to Tableau and Power BI; automated report generation',
-      'Data filtering, sorting, and sampling aligned with Data Robot, Dataiku, H2O.ai → 2x faster cleaning',
+      '1000x data cleaning speedup with Pymongo',
+      'Dashboard migration from SISENSE to Tableau and Power BI',
     ],
   },
 ]
@@ -60,13 +54,12 @@ const projects: ProjectCaseStudy[] = [
     title: 'Retail Sales Analysis & Forecasting for Walmart',
     context: 'ML • Time series',
     description: 'LSTM, Prophet, ARIMA, LightGBM on historical sales.',
-    problem: 'Walmart needed accurate demand forecasting across thousands of store-product combinations to optimize inventory and reduce waste.',
+    problem: 'Walmart needed accurate demand forecasting across thousands of store-product combinations.',
     metrics: [
       { label: 'Forecast accuracy gain', value: '15%' },
       { label: 'Predicted sales increase', value: '8%' },
-      { label: 'Models evaluated', value: '4' },
     ],
-    tradeoffs: 'Chose ensemble of LSTM + LightGBM over single-model approach. ARIMA handled seasonality well but failed on non-linear trends.',
+    tradeoffs: 'Chose ensemble of LSTM + LightGBM over single-model approach.',
     flow: {
       nodes: [
         { id: 'data', label: 'Historical Data', x: 10, y: 80 },
@@ -93,12 +86,12 @@ const projects: ProjectCaseStudy[] = [
     title: 'DineWise Restaurant Recommendation',
     context: 'Azure • Django • Python',
     description: 'Cloud-based ML recommendation system.',
-    problem: 'Users struggled to find relevant restaurants. Existing search was keyword-only with no personalization or intelligent ranking.',
+    problem: 'Users struggled to find relevant restaurants; no personalization or intelligent ranking.',
     metrics: [
       { label: 'Relevance improvement', value: '80%' },
       { label: 'Data retrieval speedup', value: '40%' },
     ],
-    tradeoffs: 'TF-IDF was chosen over collaborative filtering due to cold-start constraints. Azure ML provided managed scaling but added vendor lock-in.',
+    tradeoffs: 'TF-IDF over collaborative filtering due to cold-start; Azure ML for scaling.',
     flow: {
       nodes: [
         { id: 'user', label: 'User Query', x: 10, y: 80 },
@@ -122,12 +115,12 @@ const projects: ProjectCaseStudy[] = [
     title: 'CampusHub — Event Discovery Platform',
     context: 'Full-stack • React • FastAPI',
     description: 'Event discovery, groups, and collaboration for students.',
-    problem: 'Students had no centralized way to discover campus events, form interest groups, or get personalized recommendations.',
+    problem: 'No centralized way to discover campus events or get personalized recommendations.',
     metrics: [
       { label: 'Search perf gain', value: '~30%' },
       { label: 'Stack', value: 'React + FastAPI' },
     ],
-    tradeoffs: 'FastAPI was chosen over Express for async performance. PostgreSQL beat MongoDB due to relational event-group data.',
+    tradeoffs: 'FastAPI for async; PostgreSQL for relational event-group data.',
     flow: {
       nodes: [
         { id: 'react', label: 'React UI', x: 10, y: 80 },
@@ -149,12 +142,12 @@ const projects: ProjectCaseStudy[] = [
     title: 'Stock Market Time Series Platform',
     context: 'Django • BSE',
     description: 'Real-time stock analytics with ARIMA.',
-    problem: 'Retail investors lacked accessible real-time analytics tools. Existing platforms were slow and lacked predictive capabilities.',
+    problem: 'Retail investors lacked accessible real-time analytics and predictive tools.',
     metrics: [
       { label: 'Accuracy improvement', value: '20%' },
       { label: 'Latency reduction', value: '95%' },
     ],
-    tradeoffs: 'ARIMA was sufficient for short-term patterns but struggled with sudden market shifts. Django Channels handled real-time feeds.',
+    tradeoffs: 'ARIMA for short-term patterns; Django Channels for real-time feeds.',
     flow: {
       nodes: [
         { id: 'bse', label: 'BSE Live Feed', x: 10, y: 80 },
@@ -173,194 +166,182 @@ const projects: ProjectCaseStudy[] = [
   },
 ]
 
-function ExperienceReveal({
-  item,
-  index,
-  isActive,
-  onHover,
-  onLeave,
-}: {
-  item: (typeof workItems)[0]
-  index: number
-  isActive: boolean
-  onHover: () => void
-  onLeave: () => void
-}) {
-  return (
-    <motion.div
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      className="group flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-5 sm:py-6 border-b border-zinc-200 dark:border-zinc-700 last:border-0"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-      style={{ transformPerspective: 800 }}
-      whileHover={{ x: 4 }}
-    >
-      <motion.div
-        className="shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border border-zinc-200/80 dark:border-zinc-600 bg-gradient-to-br from-brand-500/10 to-brand-600/5 dark:from-brand-500/20 dark:to-brand-600/10 flex items-center justify-center"
-        whileHover={{ scale: 1.05 }}
-      >
-        <Briefcase className="w-7 h-7 sm:w-8 sm:h-8 text-brand-500 dark:text-brand-400" strokeWidth={1.5} />
-      </motion.div>
-      <div className="flex-1 min-w-0">
-        <span
-          className={`font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight block transition-colors duration-300 ${
-            isActive ? 'text-brand-500 dark:text-brand-400' : 'text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-700 dark:group-hover:text-zinc-300'
-          }`}
-          style={{ lineHeight: 1.1 }}
-        >
-          {item.role}
-        </span>
-        <p className="text-brand-500 dark:text-brand-400 text-sm sm:text-base mt-0.5">{item.company}</p>
-        <p className="text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm mt-1">{item.period} · {item.location}</p>
-        <AnimatePresence>
-          {isActive && (
-            <motion.ul
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="mt-4 space-y-2 overflow-hidden"
-            >
-              {item.highlights.map((h, i) => (
-                <motion.li
-                  key={i}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                  className="text-zinc-600 dark:text-zinc-400 text-sm sm:text-base flex items-start gap-2"
-                >
-                  <span className="text-brand-500 dark:text-brand-400 shrink-0">·</span>
-                  <span>{h}</span>
-                </motion.li>
-              ))}
-            </motion.ul>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.div>
-  )
+const ROW_GAP = 12
+const spring = { type: 'spring' as const, stiffness: 120, damping: 22, mass: 1 }
+
+function getCardState(hoveredIndex: number | null, index: number) {
+  if (hoveredIndex === null) {
+    if (index === 0) return 'active'
+    if (index === 1) return 'neighbor'
+    return 'inactive'
+  }
+  if (hoveredIndex === index) return 'active'
+  if (index === hoveredIndex - 1 || index === hoveredIndex + 1) return 'neighbor'
+  return 'inactive'
 }
 
-function ProjectReveal({
-  project,
-  index,
-  isActive,
-  onHover,
-  onLeave,
-}: {
-  project: ProjectCaseStudy
-  index: number
-  isActive: boolean
-  onHover: () => void
-  onLeave: () => void
-}) {
-  return (
-    <motion.div
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      className="group flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-5 sm:py-6 border-b border-zinc-200 dark:border-zinc-700 last:border-0"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-      style={{ transformPerspective: 800 }}
-      whileHover={{ x: 4 }}
-    >
-      <motion.div
-        className="shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border border-zinc-200/80 dark:border-zinc-600 bg-gradient-to-br from-brand-500/10 to-brand-600/5 dark:from-brand-500/20 dark:to-brand-600/10 flex items-center justify-center"
-        whileHover={{ scale: 1.05 }}
-      >
-        <Layers className="w-7 h-7 sm:w-8 sm:h-8 text-brand-500 dark:text-brand-400" strokeWidth={1.5} />
-      </motion.div>
-      <div className="flex-1 min-w-0">
-        <span
-          className={`font-display text-xl sm:text-2xl md:text-3xl font-bold tracking-tight block transition-colors duration-300 ${
-            isActive ? 'text-brand-500 dark:text-brand-400' : 'text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-700 dark:group-hover:text-zinc-300'
-          }`}
-          style={{ lineHeight: 1.15 }}
-        >
-          {project.title}
-        </span>
-        <p className="text-brand-500 dark:text-brand-400 text-xs sm:text-sm mt-0.5">{project.context}</p>
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1 line-clamp-1">{project.description}</p>
-        <AnimatePresence>
-          {isActive && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="mt-5 space-y-4 overflow-hidden"
-            >
-              <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">{project.problem}</p>
-              <div className="flex flex-wrap gap-2">
-                {project.metrics.map((m) => (
-                  <span
-                    key={m.label}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-500/10 dark:bg-brand-500/20 text-brand-600 dark:text-brand-300 text-xs font-medium"
-                  >
-                    <BarChart3 className="w-3.5 h-3.5" />
-                    {m.label}: {m.value}
-                  </span>
-                ))}
-              </div>
-              <p className="text-zinc-500 dark:text-zinc-500 text-sm leading-relaxed italic">{project.tradeoffs}</p>
-              <div className="pt-2 border-t border-zinc-200 dark:border-zinc-600">
-                <p className="text-zinc-500 dark:text-zinc-500 text-xs uppercase tracking-wider mb-2">Flow</p>
-                <InfraFlow config={project.flow} />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.div>
-  )
+const cardVariants = {
+  active: { flex: 2, minHeight: 220, opacity: 1 },
+  neighbor: { flex: 1, minHeight: 160, opacity: 1 },
+  inactive: { flex: 1, minHeight: 120, opacity: 0.55 },
 }
 
-const Work: React.FC = () => {
-  const [activeExperience, setActiveExperience] = useState<number | null>(null)
-  const [activeProject, setActiveProject] = useState<number | null>(null)
+const detailTransition = { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const }
+
+function ExperienceRow() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (
-    <div className="space-y-16 pb-8">
-      <div>
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm uppercase tracking-widest mb-8 max-w-xl">
-          Where I've built — roles and impact.
-        </p>
-        <div className="flex flex-col">
-          {workItems.map((item, index) => (
-            <ExperienceReveal
-              key={item.company}
-              item={item}
-              index={index}
-              isActive={activeExperience === index}
-              onHover={() => setActiveExperience(index)}
-              onLeave={() => setActiveExperience(null)}
-            />
-          ))}
-        </div>
-      </div>
+    <div
+      className="flex flex-row items-stretch w-full overflow-hidden rounded-2xl"
+      style={{ gap: ROW_GAP, minHeight: 200 }}
+      onMouseLeave={() => setHoveredIndex(null)}
+    >
+      {workItems.map((item, i) => {
+        const state = getCardState(hoveredIndex, i)
+        const isActive = state === 'active'
+        const initial = i === 0 ? 'active' : i === 1 ? 'neighbor' : 'inactive'
 
-      <div>
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm uppercase tracking-widest mb-8 max-w-xl">
-          Selected projects — problem, metrics, and flow.
-        </p>
-        <div className="flex flex-col">
-          {projects.map((project, index) => (
-            <ProjectReveal
-              key={project.title}
-              project={project}
-              index={index}
-              isActive={activeProject === index}
-              onHover={() => setActiveProject(index)}
-              onLeave={() => setActiveProject(null)}
-            />
-          ))}
-        </div>
-      </div>
+        return (
+          <motion.div
+            key={item.company}
+            layout
+            variants={cardVariants}
+            initial={initial}
+            animate={state}
+            transition={spring}
+            onMouseEnter={() => setHoveredIndex(i)}
+            className="flex-shrink-0 cursor-default overflow-hidden rounded-xl px-[6px] first:pl-0 last:pr-0"
+          >
+            <div className="w-full h-full rounded-xl bg-zinc-900/95 dark:bg-zinc-950/95 backdrop-blur-sm flex flex-col justify-end p-5 sm:p-6 min-h-[180px] relative">
+              <div
+                className="absolute inset-0 rounded-xl z-[0] pointer-events-none"
+                style={{
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.35) 50%, transparent 100%)',
+                }}
+              />
+              <div className="relative z-10 flex flex-col items-start gap-1.5">
+                <h3 className="font-display text-base sm:text-lg font-bold tracking-tight text-white">
+                  {item.role}
+                </h3>
+                <p className="text-brand-400 text-sm">{item.company}</p>
+                <p className="text-zinc-500 text-xs">{item.period} · {item.location}</p>
+
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={detailTransition}
+                      className="mt-4 pt-4 border-t border-white/10 w-full overflow-hidden space-y-2"
+                    >
+                      {item.highlights.map((h, idx) => (
+                        <motion.li
+                          key={idx}
+                          initial={{ opacity: 0, x: -6 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.04 }}
+                          className="text-zinc-400 text-xs sm:text-sm flex items-start gap-2 list-none"
+                        >
+                          <span className="text-brand-400 shrink-0">·</span>
+                          <span>{h}</span>
+                        </motion.li>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </motion.div>
+        )
+      })}
     </div>
   )
 }
 
-export default Work
+function ProjectRow() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+
+  return (
+    <div
+      className="flex flex-row items-stretch w-full overflow-hidden rounded-2xl"
+      style={{ gap: ROW_GAP, minHeight: 200 }}
+      onMouseLeave={() => setHoveredIndex(null)}
+    >
+      {projects.map((project, i) => {
+        const state = getCardState(hoveredIndex, i)
+        const isActive = state === 'active'
+        const initial = i === 0 ? 'active' : i === 1 ? 'neighbor' : 'inactive'
+
+        return (
+          <motion.div
+            key={project.title}
+            layout
+            variants={cardVariants}
+            initial={initial}
+            animate={state}
+            transition={spring}
+            onMouseEnter={() => setHoveredIndex(i)}
+            className="flex-shrink-0 cursor-default overflow-hidden rounded-xl px-[6px] first:pl-0 last:pr-0"
+          >
+            <div className="w-full h-full rounded-xl bg-zinc-900/95 dark:bg-zinc-950/95 backdrop-blur-sm flex flex-col justify-end p-5 sm:p-6 min-h-[180px] relative">
+              <div
+                className="absolute inset-0 rounded-xl z-[0] pointer-events-none"
+                style={{
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.35) 50%, transparent 100%)',
+                }}
+              />
+              <div className="relative z-10 flex flex-col items-start gap-1.5">
+                <h3 className="font-display text-base sm:text-lg font-bold tracking-tight text-white">
+                  {project.title}
+                </h3>
+                <p className="text-brand-400 text-sm">{project.context}</p>
+                <p className="text-zinc-500 text-xs line-clamp-2">{project.description}</p>
+
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={detailTransition}
+                      className="mt-4 pt-4 border-t border-white/10 w-full overflow-hidden space-y-3"
+                    >
+                      <p className="text-zinc-400 text-xs leading-relaxed">{project.problem}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.metrics.map((m) => (
+                          <span
+                            key={m.label}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-[10px] sm:text-xs"
+                          >
+                            <BarChart3 className="w-3 h-3" />
+                            {m.label}: {m.value}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-zinc-500 text-[10px] sm:text-xs italic">{project.tradeoffs}</p>
+                      <div className="pt-2 border-t border-white/10">
+                        <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-1.5">Flow</p>
+                        <InfraFlow config={project.flow} />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </motion.div>
+        )
+      })}
+    </div>
+  )
+}
+
+export default function Work() {
+  return (
+    <div className="w-full h-full min-h-0 flex flex-col gap-8 pb-6 overflow-y-auto">
+      <ExperienceRow />
+      <ProjectRow />
+    </div>
+  )
+}

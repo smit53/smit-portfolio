@@ -40,7 +40,8 @@ export function VisitorProvider({ children }: { children: React.ReactNode }) {
   const stored = loadStored()
   const [visitorName, setVisitorNameState] = useState<string | null>(stored?.name ?? null)
   const [persona, setPersonaState] = useState<Persona>(stored?.persona ?? null)
-  const [hasVisited, setHasVisited] = useState(false)
+  // If we have stored persona, user already completed welcome → show portfolio on load
+  const [hasVisited, setHasVisited] = useState(!!stored?.persona)
   const [isReturning] = useState(!!stored?.name)
 
   useEffect(() => {

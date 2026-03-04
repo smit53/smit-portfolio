@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
+const HOVER_SELECTOR = 'a, button, [role="button"], input, select, textarea, [data-cursor-hover]'
+
 /**
- * Custom cursor: a dot + ring that follow the mouse.
- * Only active on devices with a coarse pointer (mouse); hidden on touch.
+ * Custom cursor: orange dot by default; dot + ring when over interactive elements.
+ * Only active on devices with a fine pointer (mouse); hidden on touch.
  */
 export default function CustomCursor() {
   const [position, setPosition] = useState({ x: -100, y: -100 })
   const [visible, setVisible] = useState(false)
+  const [isHovering, setIsHovering] = useState(false)
   const [isPointer, setIsPointer] = useState(false)
 
   useEffect(() => {
@@ -21,6 +24,10 @@ export default function CustomCursor() {
     const handleMove = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY })
       if (!visible) setVisible(true)
+      const target = e.target as Node
+      if (target && typeof (target as Element).closest === 'function') {
+        setIsHovering((target as Element).closest(HOVER_SELECTOR) != null)
+      }
     }
     const handleLeave = () => setVisible(false)
     const handleEnter = () => setVisible(true)
@@ -58,8 +65,8 @@ export default function CustomCursor() {
         className="absolute w-8 h-8 rounded-full border-2 border-brand-500/60 dark:border-brand-400/60"
         style={{ left: position.x, top: position.y, x: '-50%', y: '-50%' }}
         animate={{
-          opacity: visible ? 1 : 0,
-          scale: visible ? 1 : 0.8,
+          opacity: visible && isHovering ? 1 : 0,
+          scale: visible && isHovering ? 1 : 0.8,
         }}
         transition={{ type: 'spring', stiffness: 500, damping: 28 }}
       />

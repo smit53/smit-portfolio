@@ -7,7 +7,8 @@ const interests: Array<{
   description: string
   size: 'sm' | 'md' | 'lg'
   tilt?: number
-  gif?: string
+  gif: string
+  image?: string
 }> = [
   {
     title: 'Volleyball',
@@ -15,14 +16,16 @@ const interests: Array<{
       'I play for the rush of the rally—teamwork, quick decisions, and that moment when the ball finds the perfect pass.',
     size: 'lg',
     tilt: -0.5,
-    gif: 'https://media1.giphy.com/media/3o7btPCcdNniyf0ArS/200w.gif',
+    gif: 'https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif',
+    image: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=600',
   },
   {
     title: 'Reading',
     description:
       'Books are my reset. Fiction, tech, philosophy—every book shifts how I think about work and life.',
     size: 'md',
-    gif: 'https://media1.giphy.com/media/3o85xrRijSEEDoYikg/200w.gif',
+    gif: 'https://media.giphy.com/media/3o85xrRijSEEDoYikg/giphy.gif',
+    image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600',
   },
   {
     title: 'Marathons',
@@ -30,7 +33,8 @@ const interests: Array<{
       'Long runs teach patience, pacing, and pushing through when it gets hard—on the road and off.',
     size: 'lg',
     tilt: 0.5,
-    gif: 'https://media1.giphy.com/media/l0MYt5jPR6QX5nqFO/200w.gif',
+    gif: 'https://media.giphy.com/media/l0MYt5jPR6QX5nqFO/giphy.gif',
+    image: 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=600',
   },
   {
     title: 'Building software',
@@ -38,14 +42,16 @@ const interests: Array<{
       'Crafting elegant solutions to complex problems. Flow in turning ideas into working systems.',
     size: 'md',
     tilt: 0.3,
-    gif: 'https://media1.giphy.com/media/26tn33aiTi1jkl6H6/200w.gif',
+    gif: 'https://media.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif',
+    image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600',
   },
   {
     title: 'AI & ML',
     description:
       'Fascinated by how machines learn. I explore the intersection of automation and human intuition.',
     size: 'sm',
-    gif: 'https://media1.giphy.com/media/3o7abKhOpu0NwenH3O/200w.gif',
+    gif: 'https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif',
+    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600',
   },
   {
     title: 'Adventure & travel',
@@ -53,14 +59,16 @@ const interests: Array<{
       'New places reshape perspective. I seek experiences that challenge how I think.',
     size: 'md',
     tilt: -0.3,
-    gif: 'https://media1.giphy.com/media/3o7TKsQ8MJHyTASOry/200w.gif',
+    gif: 'https://media.giphy.com/media/3o7TKsQ8MJHyTASOry/giphy.gif',
+    image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600',
   },
   {
     title: 'Continuous learning',
     description:
       'Always exploring—new tech, design, philosophy. I read, take courses, and tinker.',
     size: 'sm',
-    gif: 'https://media1.giphy.com/media/3o6Zt6ML6BklvQk5fi/200w.gif',
+    gif: 'https://media.giphy.com/media/3o6Zt6ML6BklvQk5fi/giphy.gif',
+    image: 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600',
   },
   {
     title: 'Deep work',
@@ -68,7 +76,8 @@ const interests: Array<{
       'I value uninterrupted blocks for complex tasks. Calm environments and clear priorities.',
     size: 'md',
     tilt: 0.4,
-    gif: 'https://media1.giphy.com/media/26u4cqiYI30juCOGY/200w.gif',
+    gif: 'https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif',
+    image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600',
   },
   {
     title: 'Teaching & sharing',
@@ -76,179 +85,161 @@ const interests: Array<{
       'I enjoy explaining ideas and helping others level up. Knowledge grows when shared.',
     size: 'sm',
     tilt: -0.2,
-    gif: 'https://media1.giphy.com/media/26u4cqiYI30juCOGY/200w.gif',
+    gif: 'https://media.giphy.com/media/1L5YuVU8BnO9e/giphy.gif',
+    image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600',
   },
 ]
 
-const sizeClasses = {
-  sm: 'text-base sm:text-lg',
-  md: 'text-xl sm:text-2xl',
-  lg: 'text-2xl sm:text-3xl md:text-4xl',
+const sizeMap = {
+  sm: 'min-w-[140px] flex-[1_1_140px] max-w-[220px]',
+  md: 'min-w-[180px] flex-[1_1_200px] max-w-[280px]',
+  lg: 'min-w-[220px] flex-[1_1_260px] max-w-[340px]',
 }
 
-// Fallback when a topic's GIF fails to load (e.g. CORS or 404)
-const FALLBACK_GIF = 'https://media1.giphy.com/media/26tn33aiTi1jkl6H6/200w.gif'
+function InterestItem({
+  title,
+  description,
+  image,
+  size,
+  tilt = 0,
+  index,
+}: {
+  title: string
+  description: string
+  image?: string
+  size: 'sm' | 'md' | 'lg'
+  tilt?: number
+  index: number
+}) {
+  const [hovered, setHovered] = useState(false)
+  const [imgError, setImgError] = useState(false)
+  const src = image && !imgError ? image : 'https://images.unsplash.com/photo-1557683316-973673baf926?w=600'
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        delay: 0.08 * index,
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className={`${sizeMap[size]} aspect-[4/3] rounded-2xl overflow-hidden cursor-default focus-within:ring-2 focus-within:ring-brand-500/50 focus-within:ring-offset-2 dark:focus-within:ring-offset-zinc-950 outline-none`}
+      style={{ rotate: tilt }}
+    >
+      <button
+        type="button"
+        className="relative w-full h-full block text-left overflow-hidden rounded-2xl"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocus={() => setHovered(true)}
+        onBlur={() => setHovered(false)}
+      >
+        {/* Back layer: description (revealed on hover) */}
+        <motion.div
+          className="absolute inset-0 z-0 flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-zinc-900 via-zinc-800 to-zinc-700 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-800"
+          initial={false}
+          animate={{
+            opacity: hovered ? 1 : 0,
+            scale: hovered ? 1 : 0.98,
+          }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <span className="font-display text-brand-400 text-sm sm:text-base font-semibold mb-2 block">
+            {title}
+          </span>
+          <p className="text-white/95 dark:text-zinc-200 text-xs sm:text-sm leading-relaxed line-clamp-4 sm:line-clamp-5">
+            {description}
+          </p>
+        </motion.div>
+
+        {/* Front layer: image (slides up on hover to reveal content behind) */}
+        <motion.div
+          className="absolute inset-0 z-10 rounded-2xl overflow-hidden"
+          initial={false}
+          animate={{
+            y: hovered ? '-100%' : 0,
+            scale: hovered ? 1.05 : 1,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 400,
+            damping: 35,
+          }}
+        >
+          <img
+            src={src}
+            alt=""
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)',
+            }}
+          />
+          <span className="absolute bottom-3 left-3 right-3 font-display text-white text-base sm:text-lg font-bold drop-shadow-lg">
+            {title}
+          </span>
+        </motion.div>
+      </button>
+    </motion.div>
+  )
+}
 
 const Interests: React.FC = () => {
   const [introDone, setIntroDone] = useState(false)
-  const [active, setActive] = useState<string | null>(null)
 
   useEffect(() => {
-    const t = setTimeout(() => setIntroDone(true), 2200)
+    const t = setTimeout(() => setIntroDone(true), 1200)
     return () => clearTimeout(t)
   }, [])
 
-  const activeItem = interests.find((i) => i.title === active)
-
   return (
-    <div className="space-y-12 sm:space-y-16 pb-8">
-      {/* Intro */}
+    <div className="w-full h-full min-h-0 flex flex-col pb-8 overflow-y-auto">
+      {/* Minimal intro — one line, flows into content */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="relative overflow-hidden rounded-2xl min-h-[200px] sm:min-h-[240px] flex flex-col justify-end p-8 sm:p-10 bg-zinc-950 dark:bg-zinc-900 border border-zinc-800 dark:border-zinc-700"
+        className="mb-8 sm:mb-10"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/95 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(255,107,0,0.06),transparent)] pointer-events-none" />
-        <div className="relative z-10">
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-brand-500 dark:text-brand-400 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-2"
-          >
-            Beyond the screen
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white dark:text-zinc-100 tracking-tight max-w-2xl"
-          >
-            <TextScramble text="What I'm into." triggerOnMount delay={1100} speed={18} />
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4, duration: 0.5 }}
-            className="text-zinc-400 dark:text-zinc-500 text-sm sm:text-base mt-3 max-w-xl"
-          >
-            Hover a word to see what it means to me.
-          </motion.p>
-        </div>
+        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+          <TextScramble text="What I'm into." triggerOnMount delay={400} speed={22} />
+        </h2>
+        <motion.p
+          className="mt-2 text-zinc-500 dark:text-zinc-400 text-sm sm:text-base"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9, duration: 0.4 }}
+        >
+          Hover any image to reveal what it means to me.
+        </motion.p>
       </motion.div>
 
+      {/* Free-flowing wrap: no grid, no tiles, varied sizes */}
       <AnimatePresence mode="wait">
         {introDone && (
           <motion.div
+            className="flex flex-wrap gap-4 sm:gap-5 md:gap-6 justify-start items-start content-start"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-10"
+            transition={{ duration: 0.4 }}
           >
-            {/* Scattered words: no grid, no cards – flex wrap, varied sizes, slight tilts; extra padding so descenders (g,y,p) aren't clipped */}
-            <div className="flex flex-wrap gap-x-5 gap-y-5 sm:gap-x-8 sm:gap-y-6 justify-center sm:justify-start items-baseline overflow-visible pb-2">
-              {interests.map((item, index) => (
-                <motion.button
-                  key={item.title}
-                  type="button"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    rotate: item.tilt ?? 0,
-                  }}
-                  whileHover={{ scale: 1.03 }}
-                  transition={{
-                    duration: 0.4,
-                    delay: 0.04 * index,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  onMouseEnter={() => setActive(item.title)}
-                  onMouseLeave={() => setActive(null)}
-                  onFocus={() => setActive(item.title)}
-                  onBlur={() => setActive(null)}
-                  className={`
-                    font-sans font-semibold tracking-tight text-left
-                    leading-relaxed pb-1.5 pt-0.5
-                    text-zinc-600 dark:text-zinc-400
-                    hover:text-brand-500 dark:hover:text-brand-400
-                    transition-colors duration-300
-                    focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:ring-offset-zinc-950
-                    ${sizeClasses[item.size]}
-                    ${active === item.title ? 'text-brand-500 dark:text-brand-400' : ''}
-                  `}
-                >
-                  <span className="relative inline-block pb-0.5 overflow-visible">
-                    {item.title}
-                    <motion.span
-                      className="absolute bottom-0.5 left-0 w-full h-0.5 bg-brand-500 dark:bg-brand-400 origin-left"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: active === item.title ? 1 : 0 }}
-                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    />
-                  </span>
-                </motion.button>
-              ))}
-            </div>
-
-            {/* One shared detail area: GIF behind when hovered, then type on top */}
-            <div className="relative min-h-[140px] sm:min-h-[160px] rounded-2xl overflow-hidden flex flex-col justify-center">
-              {/* GIF background when an interest is hovered */}
-              <AnimatePresence mode="wait">
-                {activeItem?.gif && (
-                  <motion.div
-                    key={activeItem.title}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0 z-0"
-                  >
-                    <img
-                      src={activeItem.gif}
-                      alt=""
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const el = e.currentTarget
-                        if (el.src !== FALLBACK_GIF) el.src = FALLBACK_GIF
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-zinc-900/75 dark:bg-zinc-950/80" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <div className="relative z-10 px-4 py-5 sm:px-6 sm:py-6">
-                <AnimatePresence mode="wait">
-                  {activeItem ? (
-                    <motion.div
-                      key={activeItem.title}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                      className="pl-0 sm:pl-1 border-l-0 sm:border-l-2 border-brand-500/50 dark:border-brand-400/50 sm:pl-5"
-                    >
-                      <p className="text-zinc-100 dark:text-zinc-200 text-base sm:text-lg leading-relaxed max-w-2xl drop-shadow-sm">
-                        {activeItem.description}
-                      </p>
-                    </motion.div>
-                  ) : (
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="text-zinc-500 dark:text-zinc-500 text-sm sm:text-base italic"
-                    >
-                      Hover a word above to see what it means to me.
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
+            {interests.map((interest, index) => (
+              <InterestItem
+                key={interest.title}
+                title={interest.title}
+                description={interest.description}
+                image={interest.image}
+                size={interest.size}
+                tilt={interest.tilt}
+                index={index}
+              />
+            ))}
           </motion.div>
         )}
       </AnimatePresence>

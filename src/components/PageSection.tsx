@@ -1,4 +1,5 @@
 import TextScramble from './TextScramble'
+import HeadingRevealLayout from './HeadingRevealLayout'
 
 interface PageSectionProps {
   id: string
@@ -6,32 +7,55 @@ interface PageSectionProps {
   subtitle?: string
   children: React.ReactNode
   sectionStyle?: React.CSSProperties
+  sectionClassName?: string
+  contentFullWidth?: boolean
+  /** When true, heading appears centered first then moves up and reveals content. */
+  headingReveal?: boolean
 }
 
-const PageSection: React.FC<PageSectionProps> = ({ id, title, subtitle, children, sectionStyle }) => {
-  return (
-    <section
-      id={id}
-      className="relative min-h-screen flex flex-col items-center pt-20 pb-28 sm:pt-24 sm:pb-32 px-6 sm:px-12 lg:px-24 shrink-0 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-sm"
-      style={{ ...sectionStyle, scrollMarginTop: 0 }}
-    >
-      {/* Subtle top edge: section separator */}
-      <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-700 to-transparent opacity-60" aria-hidden />
-      <div className="w-full max-w-6xl flex flex-col items-center flex-1">
-        <div className="w-full flex justify-center mb-12 sm:mb-16 shrink-0">
-          <div className="text-center">
-            <TextScramble
-              text={title}
-              as="h2"
-              className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100"
-              speed={18}
-            />
-            {subtitle && (
-              <p className="text-zinc-600 dark:text-zinc-400 text-lg mt-3">{subtitle}</p>
-            )}
-          </div>
+const headingBlock = (
+  title: string,
+  subtitle?: string
+) => (
+  <div className="w-full text-left">
+    <TextScramble
+      text={title}
+      as="h2"
+      className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+      speed={18}
+    />
+    {subtitle && (
+      <p className="text-zinc-600 dark:text-zinc-400 text-xl sm:text-2xl mt-4 sm:mt-5 max-w-3xl">
+        {subtitle}
+      </p>
+    )}
+  </div>
+)
+
+const PageSection: React.FC<PageSectionProps> = ({ id, title, subtitle, children, sectionStyle, sectionClassName, contentFullWidth, headingReveal }) => {
+  const sectionClass = `relative min-h-full flex flex-col w-full px-4 sm:px-12 lg:px-16 xl:px-24 py-10 sm:py-14 bg-white dark:bg-black ${sectionClassName ?? ''}`
+
+  if (headingReveal) {
+    return (
+      <section id={id} className={sectionClass} style={sectionStyle}>
+        <div className={`w-full flex flex-col flex-1 min-h-0 ${contentFullWidth ? 'max-w-none' : 'max-w-none'}`}>
+          <HeadingRevealLayout heading={headingBlock(title, subtitle)}>
+            <div className={`w-full min-h-0 flex-1 flex flex-col text-left ${contentFullWidth ? 'max-w-none overflow-x-auto overflow-y-hidden scroll-smooth' : 'max-w-none'}`}>
+              {children}
+            </div>
+          </HeadingRevealLayout>
         </div>
-        <div className="w-full max-w-6xl self-center min-h-0">
+      </section>
+    )
+  }
+
+  return (
+    <section id={id} className={sectionClass} style={sectionStyle}>
+      <div className={`w-full flex flex-col flex-1 min-h-0`}>
+        <div className="w-full mb-10 sm:mb-14 shrink-0">
+          {headingBlock(title, subtitle)}
+        </div>
+        <div className={`w-full min-h-0 flex-1 flex flex-col text-left ${contentFullWidth ? 'max-w-none overflow-x-auto overflow-y-hidden scroll-smooth' : 'max-w-none'}`}>
           {children}
         </div>
       </div>

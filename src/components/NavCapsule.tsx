@@ -82,7 +82,11 @@ const NavCapsule: React.FC = () => {
   return (
     <div
       ref={ref}
-      className="fixed top-6 right-6 z-50 flex flex-col items-end"
+      className="fixed z-50 flex flex-col items-end"
+      style={{
+        top: 'max(1rem, env(safe-area-inset-top, 0px))',
+        right: 'max(1rem, env(safe-area-inset-right, 0px))',
+      }}
       onMouseEnter={() => {
         clearLeaveTimer()
         setOpen(true)
@@ -92,7 +96,7 @@ const NavCapsule: React.FC = () => {
       <motion.button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="relative w-14 h-14 rounded-full bg-white dark:bg-zinc-800 shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-zinc-200/80 dark:border-zinc-600 flex items-center justify-center text-zinc-600 dark:text-zinc-200 hover:text-brand-500 dark:hover:text-brand-400 hover:border-brand-500/40 dark:hover:border-brand-500/50 transition-colors duration-300"
+        className="relative w-14 h-14 min-w-[44px] min-h-[44px] rounded-full bg-white/70 dark:bg-zinc-800/70 backdrop-blur-xl shadow-lg border border-white/30 dark:border-zinc-600/60 flex items-center justify-center text-zinc-600 dark:text-zinc-200 hover:text-brand-500 dark:hover:text-brand-400 hover:border-brand-500/50 dark:hover:border-brand-500/50 transition-all duration-300 touch-manipulation active:scale-95"
         style={{ transformPerspective: 600 }}
         whileHover={{ scale: 1.08, rotate: 12 }}
         whileTap={{ scale: 0.95 }}
@@ -116,7 +120,7 @@ const NavCapsule: React.FC = () => {
               transformPerspective: 800,
               transformOrigin: 'top right',
             }}
-            className="absolute top-full right-0 mt-4 overflow-hidden rounded-[2rem] bg-white/98 dark:bg-zinc-800 dark:border-zinc-600 backdrop-blur-2xl border border-zinc-200/90 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.04)] dark:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.06)] py-2.5 px-2 w-[200px]"
+            className="absolute top-full right-0 mt-3 sm:mt-4 overflow-hidden rounded-2xl sm:rounded-[2rem] bg-white/60 dark:bg-zinc-800/70 backdrop-blur-2xl border border-white/25 dark:border-zinc-600/60 shadow-xl py-2.5 px-2 w-[200px] max-h-[min(70vh,400px)] overflow-y-auto"
           >
             <motion.div
               variants={container}
@@ -131,11 +135,13 @@ const NavCapsule: React.FC = () => {
                   variants={item}
                   type="button"
                   onClick={() => handleSection(id)}
-                  className={`w-full text-left py-2.5 px-4 rounded-[1.25rem] text-[13px] font-medium transition-colors duration-200 truncate ${
+                  className={`relative w-full text-left py-2.5 px-4 rounded-[1.25rem] text-[13px] font-medium transition-colors duration-200 truncate ${
                     currentSection === id
-                      ? 'bg-brand-500/12 text-brand-600 dark:bg-brand-500/20 dark:text-brand-300'
-                      : 'text-zinc-600 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-50'
+                      ? 'bg-brand-500/15 dark:bg-brand-500/25 text-brand-600 dark:text-brand-300'
+                      : 'text-zinc-600 dark:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-700/80 hover:text-zinc-900 dark:hover:text-zinc-50'
                   }`}
+                  whileHover={{ x: 4 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   {SECTION_LABELS[id]}
                 </motion.button>
@@ -146,7 +152,7 @@ const NavCapsule: React.FC = () => {
                 type="button"
                 onClick={handleThemeToggle}
                 disabled={transitionState !== 'idle'}
-                className="w-full text-left py-2.5 px-4 rounded-[1.25rem] text-[13px] text-zinc-600 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors duration-200 flex items-center gap-2 disabled:opacity-60"
+                className="w-full text-left py-2.5 px-4 rounded-[1.25rem] text-[13px] text-zinc-600 dark:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-700/80 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors duration-200 flex items-center gap-2 disabled:opacity-60"
               >
                 {theme === 'light' ? <Moon className="w-4 h-4 shrink-0" /> : <Sun className="w-4 h-4 shrink-0" />}
                 {theme === 'light' ? 'Dark mode' : 'Light mode'}
@@ -155,7 +161,7 @@ const NavCapsule: React.FC = () => {
                 variants={item}
                 type="button"
                 onClick={handleAssistant}
-                className="w-full text-left py-2.5 px-4 rounded-[1.25rem] text-[13px] text-zinc-600 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors duration-200"
+                className="w-full text-left py-2.5 px-4 rounded-[1.25rem] text-[13px] text-zinc-600 dark:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-700/80 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors duration-200"
               >
                 Try the assistant
               </motion.button>

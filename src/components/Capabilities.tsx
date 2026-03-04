@@ -137,7 +137,7 @@ const Capabilities: React.FC = () => {
   let itemIndex = 0
   return (
     <div className="space-y-6">
-      <p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed max-w-2xl">
+      <p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed max-w-2xl rounded-xl bg-white/35 dark:bg-zinc-950/45 backdrop-blur-xl px-5 py-4">
         A mix of languages, platforms, and tools I use day to day—and a few I keep sharp for the right problem.
       </p>
       <motion.div
@@ -149,7 +149,7 @@ const Capabilities: React.FC = () => {
           rotateY,
           transformPerspective: 800,
         }}
-        className="relative min-h-[320px] rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white/90 dark:bg-zinc-800/90 shadow-sm p-6 sm:p-8 transition-colors duration-300 hover:border-brand-500/20 dark:hover:border-brand-500/30 overflow-hidden"
+        className="relative min-h-[320px] rounded-2xl bg-white/30 dark:bg-zinc-800/40 backdrop-blur-xl shadow-sm p-6 sm:p-8 transition-colors duration-300 overflow-hidden"
       >
         {showGlow && (
           <div
@@ -185,10 +185,10 @@ const Capabilities: React.FC = () => {
                     <motion.span
                       key={name}
                       initial={{ opacity: 0, scale: 0.92 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.35, delay: Math.min(idx * 0.02, 0.5), ease: [0.22, 1, 0.36, 1] }}
-                      whileHover={{ scale: 1.08, y: -6 }}
-                      className="inline-flex px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700/50 text-zinc-600 dark:text-zinc-300 text-sm font-medium hover:border-brand-500/40 dark:hover:border-brand-500/50 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white dark:hover:bg-zinc-700 cursor-default transition-colors duration-200"
+                      animate={{ opacity: 1, scale: 1, transition: { delay: Math.min(idx * 0.02, 0.5), duration: 0.35, ease: [0.22, 1, 0.36, 1] } }}
+                      whileHover={{ scale: 1.02, y: -1 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                      className="inline-flex px-4 py-2.5 rounded-xl bg-white/40 dark:bg-zinc-700/50 backdrop-blur-sm text-zinc-700 dark:text-zinc-300 text-sm font-medium hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white/60 dark:hover:bg-zinc-700/70 cursor-default transition-colors duration-200"
                     >
                       {name}
                     </motion.span>

@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
 import { HashRouter as Router } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { VisitorProvider, useVisitor } from './context/VisitorContext'
-import { SectionProvider, useSection, SECTIONS } from './context/SectionContext'
+import { SectionProvider, useSection } from './context/SectionContext'
 import { ConsoleProvider } from './context/ConsoleContext'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
 import NavCapsule from './components/NavCapsule'
@@ -12,56 +11,32 @@ import Capabilities from './components/Capabilities'
 import WorkEthic from './components/WorkEthic'
 import Work from './components/Work'
 import KeepInTouch from './components/KeepInTouch'
-import Footer from './components/Footer'
 import PageSection from './components/PageSection'
 import PortfolioBackground from './components/PortfolioBackground'
+import DotGridScramble from './components/DotGridScramble'
+import ScrambleGrid from './components/ScrambleGrid'
+import HexScramble from './components/HexScramble'
+import RayScramble from './components/RayScramble'
+import FlowScramble from './components/FlowScramble'
+import RippleScramble from './components/RippleScramble'
+import HeadingRevealLayout from './components/HeadingRevealLayout'
+import SectionNavButtons from './components/SectionNavButtons'
+import SideNav from './components/SideNav'
 import WelcomeGate from './components/WelcomeGate'
 import DevConsole from './components/DevConsole'
 import CustomCursor from './components/CustomCursor'
 
-const PANEL_COUNT = 6 // home, interests, capabilities, work-ethic, work, contact
+const CONTENT_EXIT = { opacity: 0, y: 24 }
+const CONTENT_INITIAL = { opacity: 0, y: 20 }
+const CONTENT_ANIMATE = { opacity: 1, y: 0 }
+const CONTENT_TRANSITION = { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
+const BG_TRANSITION = { duration: 0.35, ease: [0.22, 1, 0.36, 1] }
 
 function PortfolioContent() {
   const { visitorName, hasVisited } = useVisitor()
-  const { scrollRef, setSection } = useSection()
-  const [scrollProgress, setScrollProgress] = useState(0)
-  const initialViewport = typeof window !== 'undefined' ? window.innerHeight : 600
-  const [spacerHeight, setSpacerHeight] = useState((PANEL_COUNT - 1) * initialViewport)
-  const [viewportHeight, setViewportHeight] = useState(initialViewport)
+  const { currentSection } = useSection()
 
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current
-    if (!el) return
-    const { scrollTop, scrollHeight, clientHeight } = el
-    const maxScroll = scrollHeight - clientHeight
-    setScrollProgress(maxScroll > 0 ? scrollTop / maxScroll : 0)
-    const index = Math.min(
-      Math.floor(scrollTop / clientHeight),
-      PANEL_COUNT - 1
-    )
-    setSection(SECTIONS[index])
-  }, [scrollRef, setSection])
-
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    const updateSpacer = () => {
-      if (scrollRef.current) {
-        const h = scrollRef.current.clientHeight || initialViewport
-        setViewportHeight(h)
-        setSpacerHeight((PANEL_COUNT - 1) * h)
-      }
-    }
-    updateSpacer()
-    handleScroll()
-    el.addEventListener('scroll', handleScroll, { passive: true })
-    const ro = new ResizeObserver(updateSpacer)
-    ro.observe(el)
-    return () => {
-      el.removeEventListener('scroll', handleScroll)
-      ro.disconnect()
-    }
-  }, [handleScroll, scrollRef, initialViewport])
+  const welcomeLine = visitorName ? `${visitorName} — glad you're here.` : "Glad you're here."
 
   return (
     <>
@@ -77,75 +52,150 @@ function PortfolioContent() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-10 h-full flex flex-col"
           >
-            <PortfolioBackground scrollProgress={scrollProgress} />
-            <CustomCursor />
-            <NavCapsule />
-            <main
-              ref={scrollRef as React.LegacyRef<HTMLElement>}
-              onScroll={handleScroll}
-              className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scroll-smooth w-full touch-pan-y"
-              style={{ WebkitOverflowScrolling: 'touch' }}
-            >
-              {/* Spacer: vertical scroll height so one "scroll step" = one panel */}
-              <div style={{ height: spacerHeight }}
-              >
-                {/* Sticky viewport: stays in place while content scrolls */}
-                <div
-                  className="sticky top-0 left-0 w-full overflow-hidden"
-                  style={{ height: viewportHeight }}
+            <PortfolioBackground />
+
+            {/* Section-specific background (scramble effects) — slides with transition */}
+            <AnimatePresence mode="wait">
+              {currentSection && (
+                <motion.div
+                  key={currentSection}
+                  className="fixed inset-0 z-[50] pointer-events-none"
+                  initial={{ opacity: 0, x: 32 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -32 }}
+                  transition={BG_TRANSITION}
                 >
-                  {/* Horizontal strip: moves left as user scrolls down; fixed height so panels fill viewport */}
-                  <div
-                    className="flex flex-nowrap"
-                    style={{
-                      width: `${PANEL_COUNT * 100}vw`,
-                      height: viewportHeight,
-                      transform: `translateX(-${scrollProgress * (PANEL_COUNT - 1) * 100}vw)`,
-                    }}
+                  {currentSection === 'home' && <DotGridScramble />}
+                  {currentSection === 'interests' && <ScrambleGrid />}
+                  {currentSection === 'capabilities' && <HexScramble />}
+                  {currentSection === 'work-ethic' && <RayScramble />}
+                  {currentSection === 'work' && <FlowScramble />}
+                  {currentSection === 'contact' && <RippleScramble />}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <NavCapsule />
+            <SideNav />
+            <SectionNavButtons />
+
+            <main className="flex-1 min-h-0 w-full h-full min-h-full-dvh overflow-hidden flex flex-col">
+              <AnimatePresence mode="wait">
+                {currentSection === 'home' && (
+                  <motion.section
+                    key="home"
+                    id="home"
+                    className="relative flex flex-col justify-center flex-1 w-full min-h-full-dvh bg-white dark:bg-black overflow-y-auto overflow-x-hidden px-6 sm:px-12 lg:px-16 xl:px-24 py-12 sm:py-16"
+                    initial={CONTENT_INITIAL}
+                    animate={CONTENT_ANIMATE}
+                    exit={CONTENT_EXIT}
+                    transition={CONTENT_TRANSITION}
                   >
-                    <section
-                      id="home"
-                      className="flex flex-col items-center justify-center py-24 px-6 sm:px-12 lg:px-24 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-sm shrink-0"
-                      style={{ width: '100vw', minWidth: '100vw', height: viewportHeight, minHeight: viewportHeight }}
-                    >
-                      <div className="w-full max-w-5xl flex flex-col items-center">
-                        <Hero visitorName={visitorName} />
-                      </div>
-                    </section>
-                    <PageSection id="interests" title="Interests" subtitle="What drives me beyond the screen." sectionStyle={{ width: '100vw', minWidth: '100vw', height: viewportHeight, minHeight: viewportHeight }}>
+                    <div className="relative z-10 w-full flex flex-col items-stretch text-left">
+                      <HeadingRevealLayout
+                        heading={
+                          <p className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-[1.05] tracking-tighter text-zinc-700 dark:text-zinc-300 text-center w-full">
+                            {welcomeLine}
+                          </p>
+                        }
+                      >
+                        <Hero visitorName={visitorName} skipWelcomeLine />
+                      </HeadingRevealLayout>
+                    </div>
+                  </motion.section>
+                )}
+
+                {currentSection === 'interests' && (
+                  <motion.div
+                    key="interests"
+                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    initial={CONTENT_INITIAL}
+                    animate={CONTENT_ANIMATE}
+                    exit={CONTENT_EXIT}
+                    transition={CONTENT_TRANSITION}
+                  >
+                    <PageSection id="interests" title="Interests" subtitle="What drives me beyond the screen." headingReveal>
                       <Interests />
                     </PageSection>
-                    <PageSection id="capabilities" title="Capabilities" subtitle="Technologies and tools I work with." sectionStyle={{ width: '100vw', minWidth: '100vw', height: viewportHeight, minHeight: viewportHeight }}>
+                  </motion.div>
+                )}
+
+                {currentSection === 'capabilities' && (
+                  <motion.div
+                    key="capabilities"
+                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    initial={CONTENT_INITIAL}
+                    animate={CONTENT_ANIMATE}
+                    exit={CONTENT_EXIT}
+                    transition={CONTENT_TRANSITION}
+                  >
+                    <PageSection id="capabilities" title="Capabilities" subtitle="Technologies and tools I work with." headingReveal>
                       <Capabilities />
                     </PageSection>
-                    <PageSection id="work-ethic" title="How I work" subtitle="How I approach problems and partnerships." sectionStyle={{ width: '100vw', minWidth: '100vw', height: viewportHeight, minHeight: viewportHeight }}>
+                  </motion.div>
+                )}
+
+                {currentSection === 'work-ethic' && (
+                  <motion.div
+                    key="work-ethic"
+                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    initial={CONTENT_INITIAL}
+                    animate={CONTENT_ANIMATE}
+                    exit={CONTENT_EXIT}
+                    transition={CONTENT_TRANSITION}
+                  >
+                    <PageSection id="work-ethic" title="How I work" subtitle="How I approach problems and partnerships." headingReveal>
                       <WorkEthic />
                     </PageSection>
-                    <PageSection id="work" title="Work" subtitle="Experience and selected projects." sectionStyle={{ width: '100vw', minWidth: '100vw', height: viewportHeight, minHeight: viewportHeight }}>
+                  </motion.div>
+                )}
+
+                {currentSection === 'work' && (
+                  <motion.div
+                    key="work"
+                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    initial={CONTENT_INITIAL}
+                    animate={CONTENT_ANIMATE}
+                    exit={CONTENT_EXIT}
+                    transition={CONTENT_TRANSITION}
+                  >
+                    <PageSection id="work" title="Work" subtitle="Experience and selected projects." contentFullWidth headingReveal>
                       <Work />
                     </PageSection>
+                  </motion.div>
+                )}
+
+                {currentSection === 'contact' && (
+                  <motion.div
+                    key="contact"
+                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    initial={CONTENT_INITIAL}
+                    animate={CONTENT_ANIMATE}
+                    exit={CONTENT_EXIT}
+                    transition={CONTENT_TRANSITION}
+                  >
                     <section
                       id="contact"
-                      className="relative flex flex-col items-center pt-20 pb-28 sm:pt-24 sm:pb-32 px-6 sm:px-12 lg:px-24 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-sm shrink-0"
-                      style={{ width: '100vw', minWidth: '100vw', height: viewportHeight, minHeight: viewportHeight }}
+                      className="relative flex flex-col w-full min-h-full bg-white dark:bg-black px-4 sm:px-12 lg:px-16 xl:px-24 py-10 sm:py-14"
                     >
-                      <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-700 to-transparent opacity-60" aria-hidden />
-                      <div className="w-full max-w-6xl flex flex-col items-center flex-1">
-                        <div className="w-full flex justify-center mb-12 sm:mb-16 shrink-0">
-                          <div className="text-center">
-                            <h2 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Keep in touch</h2>
-                            <p className="text-zinc-600 dark:text-zinc-400 text-lg mt-3">Open to opportunities and conversations.</p>
+                      <div className="w-full flex flex-col flex-1 min-h-0">
+                        <HeadingRevealLayout
+                          heading={
+                            <div className="w-full text-left">
+                              <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Keep in touch</h2>
+                              <p className="text-zinc-600 dark:text-zinc-400 text-xl sm:text-2xl mt-4 sm:mt-5 max-w-3xl">Open to opportunities and conversations.</p>
+                            </div>
+                          }
+                        >
+                          <div className="w-full min-h-0 pt-4 text-left">
+                            <KeepInTouch />
                           </div>
-                        </div>
-                        <div className="w-full max-w-6xl self-center min-h-0">
-                          <KeepInTouch />
-                        </div>
+                        </HeadingRevealLayout>
                       </div>
-                      <Footer />
                     </section>
-                  </div>
-                </div>
-              </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </main>
           </motion.div>
         )}
@@ -158,7 +208,7 @@ function AppShell() {
   const { theme, transitionState } = useTheme()
   return (
     <div
-      className={`min-h-screen h-screen overflow-hidden bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 ${theme === 'dark' ? 'dark' : ''}`}
+      className={`min-h-screen min-h-[100dvh] h-screen h-[100dvh] overflow-hidden bg-white text-zinc-900 dark:bg-black dark:text-zinc-100 flex flex-col ${theme === 'dark' ? 'dark' : ''}`}
       style={{
         filter: transitionState === 'inverting' ? 'invert(1)' : 'none',
         transition: 'filter 1.1s ease-in-out',
@@ -166,6 +216,7 @@ function AppShell() {
     >
       <PortfolioContent />
       <DevConsole />
+      <CustomCursor />
     </div>
   )
 }

@@ -38,18 +38,17 @@ function HoverReveal({
     <motion.div
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      className="group flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-4 sm:py-6 border-b border-zinc-200 dark:border-zinc-700 last:border-0 cursor-default"
+      className="group flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-4 sm:py-6 px-4 sm:px-5 rounded-xl bg-white/25 dark:bg-zinc-950/35 backdrop-blur-xl mb-3 last:mb-0 cursor-default"
       initial={{ opacity: 0, x: -24 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4 }}
-      style={{ transformPerspective: 800 }}
-      whileHover={{ rotateY: 8, rotateX: -2, z: 4, scale: 1.02 }}
+      transition={{ duration: 0.4, type: 'spring', stiffness: 400, damping: 25 }}
+      whileHover={{ y: -2 }}
     >
       {/* Image/visual area per principle */}
       <motion.div
-        className="shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-zinc-200/80 dark:border-zinc-600 bg-gradient-to-br from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-700/80 flex items-center justify-center"
-        style={{ transformPerspective: 800 }}
-        whileHover={{ rotateY: 6, rotateX: -4, z: 8 }}
+        className="shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-white/30 dark:bg-zinc-800/50 backdrop-blur-xl flex items-center justify-center"
+        whileHover={{ scale: 1.03 }}
+        transition={{ duration: 0.2 }}
       >
         {image ? (
           <img src={image} alt="" className="w-full h-full object-cover" />
@@ -91,7 +90,7 @@ const WorkEthic: React.FC = () => {
 
   return (
     <div className="space-y-2">
-      <p className="text-zinc-500 dark:text-zinc-400 text-sm uppercase tracking-widest mb-10 max-w-xl">
+      <p className="text-zinc-600 dark:text-zinc-400 text-sm uppercase tracking-widest mb-10 max-w-xl rounded-xl bg-white/35 dark:bg-zinc-950/45 backdrop-blur-xl px-5 py-3 inline-block">
         How I show up day to day — principles I lean on.
       </p>
       <div className="flex flex-col">

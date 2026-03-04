@@ -3,13 +3,31 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-  
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    /* Safe area for notched devices */
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Better touch targets and prevent double-zoom on inputs on iOS */
+  @media (pointer: coarse) {
+    input, select, textarea, button {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Reduce tap highlight on touch devices */
+  * {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -17,7 +35,12 @@
   .section-padding {
     @apply py-20 md:py-28 lg:py-32 px-4 sm:px-6 lg:px-8;
   }
-  
+
+  /* Solid panel: single contrasting background, no tint */
+  .glass-panel {
+    @apply bg-white dark:bg-black;
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -27,9 +50,47 @@
   .text-gradient {
     @apply bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 bg-clip-text text-transparent;
   }
-  
+
   .text-gradient-accent {
     @apply bg-gradient-to-r from-brand-400 via-brand-500 to-brand-600 bg-clip-text text-transparent;
+  }
+
+  /* Fluid gradient on text after reveal — subtle shimmer */
+  .fluid-text {
+    background: linear-gradient(
+      110deg,
+      rgb(24 24 27) 0%,
+      rgb(39 39 42) 25%,
+      rgb(255 107 0 / 0.9) 50%,
+      rgb(63 63 70) 75%,
+      rgb(24 24 27) 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: fluid-shift 8s ease-in-out infinite;
+  }
+
+  .dark .fluid-text {
+    background: linear-gradient(
+      110deg,
+      rgb(244 244 245) 0%,
+      rgb(228 228 231) 25%,
+      rgb(255 140 56 / 0.95) 50%,
+      rgb(212 212 216) 75%,
+      rgb(244 244 245) 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: fluid-shift 8s ease-in-out infinite;
+  }
+
+  @keyframes fluid-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 }
 
@@ -57,4 +118,46 @@
 body.custom-cursor-active,
 body.custom-cursor-active * {
   cursor: none !important;
+}
+
+/* Responsive layout: use dvh so mobile browser UI doesn't break panel height */
+.h-full-dvh {
+  height: 100vh;
+  height: 100dvh;
+}
+
+.min-h-full-dvh {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Scroll spacer height for 6 panels: 5 viewport heights */
+.scroll-spacer-panels {
+  height: 500vh;
+  height: 500dvh;
+}
+
+/* Panel inner scroll: when content is taller than viewport, scroll inside the panel */
+.panel-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Bottom padding that includes safe area so content isn't cut off above home indicator */
+.panel-padding-bottom {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 640px) {
+  .panel-padding-bottom {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Prevent pull-to-refresh / overscroll from breaking layout on mobile */
+@supports (overflow: overlay) {
+  .overflow-y-auto {
+    overflow-y: overlay;
+  }
 }

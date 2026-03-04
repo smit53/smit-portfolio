@@ -1,19 +1,74 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BarChart3, Code2, Rocket } from 'lucide-react'
+import { BarChart3, Code2, Rocket, Sparkles } from 'lucide-react'
 import { useVisitor, Persona } from '../context/VisitorContext'
+import MotionButton from './ui/MotionButton'
+import WelcomeBackground from './WelcomeBackground'
 
-const personas: { id: Persona; label: string; tagline: string; icon: typeof BarChart3 }[] = [
-  { id: 'recruiter', label: 'Recruiter', tagline: 'Show me impact and scale', icon: BarChart3 },
-  { id: 'engineer', label: 'Engineer', tagline: 'Show me architecture and code', icon: Code2 },
-  { id: 'founder', label: 'Founder', tagline: 'Show me product thinking', icon: Rocket },
+const spring = { type: 'spring' as const, stiffness: 380, damping: 28 }
+const springBounce = { type: 'spring' as const, stiffness: 320, damping: 24 }
+const stagger = { staggerChildren: 0.07, delayChildren: 0.12 }
+
+const pageTransition = {
+  initial: { opacity: 0, scale: 0.98, y: 8 },
+  animate: { opacity: 1, scale: 1, y: 0 },
+  exit: { opacity: 0, scale: 0.99, y: -6 },
+  transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+}
+
+const nameStepVariants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: { opacity: 1, y: 0 },
+}
+const nameStepTitleVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+}
+const nameStepSubVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0 },
+}
+
+const personas: {
+  id: Persona
+  label: string
+  headline: string
+  description: string
+  icon: typeof BarChart3
+}[] = [
+  {
+    id: 'recruiter',
+    label: "I'm a recruiter",
+    headline: 'Show me the impact',
+    description:
+      "I want to see results, scale, and how you'd fit our team. Skip the fluff — show me what matters.",
+    icon: BarChart3,
+  },
+  {
+    id: 'engineer',
+    label: "I'm an engineer",
+    headline: 'Show me the craft',
+    description:
+      "I'm curious about how you build: architecture, tradeoffs, and the code behind the product.",
+    icon: Code2,
+  },
+  {
+    id: 'founder',
+    label: "I'm a founder",
+    headline: 'Show me the thinking',
+    description:
+      'I care about product sense, user focus, and how you turn ideas into something people love.',
+    icon: Rocket,
+  },
 ]
 
 const WelcomeGate: React.FC = () => {
   const { visitorName, setVisitorName, isReturning, setPersona, resetVisitor } = useVisitor()
   const [nameInput, setNameInput] = useState('')
   const [isFocused, setIsFocused] = useState(false)
-  const [step, setStep] = useState<'name' | 'persona' | 'returning'>(isReturning ? 'returning' : 'name')
+  const [step, setStep] = useState<'name' | 'persona' | 'returning'>(
+    isReturning ? 'returning' : 'name'
+  )
 
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,158 +88,199 @@ const WelcomeGate: React.FC = () => {
   const handlePersonaSelect = (p: Persona) => setPersona(p)
 
   return (
-    <div className="fixed inset-0 z-[100] bg-white dark:bg-zinc-950 overflow-hidden" style={{ boxSizing: 'border-box' }}>
-      {/* Abstract background shapes */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-0 right-0 w-[80vmax] h-[80vmax] rounded-full bg-brand-500/[0.06] dark:bg-brand-500/[0.1] blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-[60vmax] h-[60vmax] rounded-full bg-brand-600/[0.05] dark:bg-brand-600/[0.08] blur-3xl translate-y-1/2 -translate-x-1/4" />
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full border border-brand-500/10 dark:border-brand-500/20" />
-        <div className="absolute bottom-1/4 right-1/3 w-64 h-64 rounded-full border border-zinc-300/50 dark:border-zinc-600/50" />
-      </div>
+    <div
+      className="fixed inset-0 z-[100] bg-white dark:bg-black overflow-auto overscroll-none"
+      style={{
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingLeft: 'max(1.5rem, env(safe-area-inset-left))',
+        paddingRight: 'max(1.5rem, env(safe-area-inset-right))',
+        boxSizing: 'border-box',
+      }}
+    >
+      <WelcomeBackground />
 
-      <div className="relative z-10 min-h-full flex flex-col px-6 sm:px-10 lg:px-16 py-12 sm:py-16">
+      <div className="relative z-10 min-h-full flex flex-col items-center justify-center px-4 sm:px-10 lg:px-16 py-12 sm:py-20">
         <AnimatePresence mode="wait">
           {step === 'returning' && (
             <motion.div
               key="returning"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="flex flex-col min-h-full"
+              {...pageTransition}
+              className="w-full max-w-xl mx-auto flex flex-col items-center text-center"
             >
-              <h1 className="font-sans text-5xl sm:text-7xl md:text-8xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tighter text-left max-w-4xl">
-                Welcome back,
-              </h1>
-              <motion.span
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="font-sans text-4xl sm:text-6xl font-bold text-brand-500 dark:text-brand-400 mt-4 block"
+              <motion.h1
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...spring, delay: 0.1 }}
+                className="font-sans text-4xl sm:text-6xl md:text-7xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight"
               >
-                {visitorName}.
-              </motion.span>
-              <p className="text-zinc-500 dark:text-zinc-400 text-lg mt-12 max-w-sm">
+                Hey again, {visitorName}.
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...spring, delay: 0.2 }}
+                className="text-zinc-500 dark:text-zinc-400 text-lg mt-6"
+              >
                 Pick up where you left off?
-              </p>
-              <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <motion.button
-                  onClick={handleContinueReturning}
-                  className="px-8 py-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold rounded-full hover:bg-zinc-800 dark:hover:bg-white transition-colors"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...spring, delay: 0.3 }}
+                className="mt-10 flex flex-col sm:flex-row gap-3 justify-center"
+              >
+                <MotionButton variant="primary" onClick={handleContinueReturning}>
                   Continue
-                </motion.button>
-                <button
+                </MotionButton>
+                <MotionButton
+                  variant="ghost"
                   onClick={handleStartFresh}
                   className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 text-sm"
                 >
                   Not {visitorName}? Start fresh
-                </button>
-              </div>
+                </MotionButton>
+              </motion.div>
             </motion.div>
           )}
 
           {step === 'name' && (
             <motion.div
               key="name"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="flex flex-col min-h-full"
+              {...pageTransition}
+              className="w-full max-w-2xl mx-auto flex flex-col items-center"
             >
-              {/* Asymmetric: huge type left, form bottom-right */}
-              <div className="flex-1 flex flex-col justify-between">
-                <div>
-                  <motion.span
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="text-brand-500 dark:text-brand-400 font-display text-sm font-semibold tracking-[0.3em] uppercase block mb-6"
-                  >
-                    Welcome
-                  </motion.span>
-                  <h1 className="font-sans text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tighter text-left max-w-5xl">
-                    Let's get started.
-                  </h1>
-                </div>
+              <motion.div
+                variants={{ visible: { transition: stagger } }}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col items-center text-center"
+              >
+                <motion.span
+                  variants={nameStepVariants}
+                  transition={spring}
+                  className="inline-flex items-center gap-2 text-brand-500 dark:text-brand-400 font-medium text-sm tracking-wide uppercase mb-5"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Welcome
+                </motion.span>
+                <motion.h1
+                  variants={nameStepTitleVariants}
+                  transition={spring}
+                  className="font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight leading-[1.08] max-w-2xl"
+                >
+                  Hi there — what should I call you?
+                </motion.h1>
+                <motion.p
+                  variants={nameStepSubVariants}
+                  transition={spring}
+                  className="text-zinc-500 dark:text-zinc-400 text-lg mt-5 max-w-md"
+                >
+                  Just your first name is perfect. I'll tailor the tour to you.
+                </motion.p>
+              </motion.div>
 
-                <div className="mt-16 sm:mt-24 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-10">
-                  <p className="text-zinc-500 dark:text-zinc-400 text-xl sm:text-2xl font-medium max-w-md order-2 sm:order-1">
-                    What should I call you?
-                  </p>
-                  <motion.form
-                    onSubmit={handleNameSubmit}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                    className="flex flex-col sm:flex-row gap-4 sm:items-end order-1 sm:order-2 w-full sm:w-auto sm:min-w-[320px]"
-                  >
-                    <input
-                      type="text"
-                      value={nameInput}
-                      onChange={(e) => setNameInput(e.target.value)}
-                      onFocus={() => setIsFocused(true)}
-                      onBlur={() => setIsFocused(false)}
-                      placeholder="Your name"
-                      className="flex-1 px-6 py-4 bg-transparent border-b-2 border-zinc-200 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 text-xl font-medium focus:outline-none transition-colors"
-                      style={{
-                        borderColor: isFocused ? 'rgba(255, 107, 0, 0.6)' : undefined,
-                      }}
-                      autoFocus
-                    />
-                    <motion.button
-                      type="submit"
-                      disabled={!nameInput.trim()}
-                      className="px-8 py-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold rounded-full disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-800 dark:hover:bg-white transition-colors"
-                      whileHover={nameInput.trim() ? { scale: 1.02 } : {}}
-                      whileTap={nameInput.trim() ? { scale: 0.98 } : {}}
-                    >
-                      Continue
-                    </motion.button>
-                  </motion.form>
-                </div>
-              </div>
+              <motion.form
+                onSubmit={handleNameSubmit}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...spring, delay: 0.45 }}
+                className="mt-14 w-full max-w-md flex flex-col sm:flex-row gap-4 sm:items-center justify-center"
+              >
+                <motion.input
+                  type="text"
+                  value={nameInput}
+                  onChange={(e) => setNameInput(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  placeholder="Your name"
+                  className="flex-1 min-w-0 px-5 py-4 rounded-2xl bg-white/80 dark:bg-zinc-800/80 border-2 border-zinc-200 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 text-lg font-medium focus:outline-none focus:border-brand-500/50 dark:focus:border-brand-400/50 transition-colors shadow-sm"
+                  style={{
+                    borderColor: isFocused ? 'rgba(255, 107, 0, 0.5)' : undefined,
+                  }}
+                  autoFocus
+                  whileFocus={{ scale: 1.02 }}
+                  transition={spring}
+                />
+                <MotionButton type="submit" disabled={!nameInput.trim()}>
+                  Let's go
+                </MotionButton>
+              </motion.form>
             </motion.div>
           )}
 
           {step === 'persona' && (
             <motion.div
               key="persona"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="flex flex-col min-h-full"
+              {...pageTransition}
+              className="w-full max-w-5xl mx-auto flex flex-col items-center py-6"
             >
-              <h1 className="font-sans text-4xl sm:text-6xl md:text-7xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tighter text-left leading-[0.9] max-w-3xl">
-                How would you like to explore?
-              </h1>
-              <p className="text-zinc-500 dark:text-zinc-400 mt-6 max-w-md text-lg">
-                Choose a path — this tailors the experience.
-              </p>
-              <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl">
-                {personas.map((p, i) => (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...spring, delay: 0.08 }}
+                className="text-center max-w-xl mb-4"
+              >
+                <h1 className="font-sans text-3xl sm:text-4xl md:text-5xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight leading-[1.15]">
+                  How would you like to explore?
+                </h1>
+                <p className="text-zinc-500 dark:text-zinc-400 mt-4 text-lg">
+                  Pick one — I'll highlight what matters most to you. You can always scroll around
+                  after.
+                </p>
+              </motion.div>
+
+              {/* Deconstructed: cards at different vertical offsets */}
+              <motion.div
+                className="mt-12 sm:mt-16 w-full grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6 max-w-4xl"
+              >
+                {personas.map((p, i) => {
+                  const offsetY = i === 0 ? -12 : i === 1 ? 0 : 14
+                  return (
                   <motion.button
                     key={p.id}
+                    type="button"
                     initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 + i * 0.1, duration: 0.4 }}
+                    animate={{ opacity: 1, y: offsetY }}
+                    transition={{ ...springBounce, delay: 0.18 + i * 0.08 }}
                     onClick={() => handlePersonaSelect(p.id)}
-                    className="group p-6 rounded-3xl border-2 border-zinc-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-800/90 hover:border-brand-500/50 dark:hover:border-brand-500/40 hover:bg-brand-500/5 dark:hover:bg-brand-500/10 text-left transition-all duration-300"
-                    whileHover={{ y: -4 }}
+                    className="group text-left p-6 sm:p-7 rounded-2xl sm:rounded-3xl border-2 border-zinc-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-800/80 hover:border-brand-500/50 dark:hover:border-brand-500/40 hover:bg-brand-500/5 dark:hover:bg-brand-500/10 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-950 backdrop-blur-sm"
+                    whileHover={{
+                      y: offsetY - 8,
+                      scale: 1.02,
+                      transition: springBounce,
+                    }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-700 group-hover:bg-brand-500/10 dark:group-hover:bg-brand-500/20 flex items-center justify-center text-zinc-600 dark:text-zinc-400 group-hover:text-brand-500 dark:group-hover:text-brand-400 transition-colors mb-4">
-                      <p.icon className="w-7 h-7" strokeWidth={1.5} />
-                    </div>
-                    <p className="font-semibold text-zinc-900 dark:text-zinc-100 text-lg">{p.label}</p>
-                    <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">{p.tagline}</p>
+                    <motion.span
+                      className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-700 group-hover:bg-brand-500/15 dark:group-hover:bg-brand-500/20 text-zinc-600 dark:text-zinc-400 group-hover:text-brand-500 dark:group-hover:text-brand-400 transition-colors mb-4"
+                      whileHover={{ rotate: 6, scale: 1.05 }}
+                      transition={spring}
+                    >
+                      <p.icon className="w-6 h-6" strokeWidth={1.5} />
+                    </motion.span>
+                    <p className="font-semibold text-zinc-900 dark:text-zinc-100 text-base sm:text-lg">
+                      {p.label}
+                    </p>
+                    <p className="font-medium text-brand-500 dark:text-brand-400 text-sm mt-1">
+                      {p.headline}
+                    </p>
+                    <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-2 leading-relaxed">
+                      {p.description}
+                    </p>
                   </motion.button>
-                ))}
-              </div>
+                  )
+                })}
+              </motion.div>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.55 }}
+                className="mt-10 text-zinc-400 dark:text-zinc-500 text-sm text-center"
+              >
+                No pressure — just pick the closest fit and we'll get started.
+              </motion.p>
             </motion.div>
           )}
         </AnimatePresence>
