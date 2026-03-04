@@ -14,22 +14,6 @@ interface VisitorContextType {
 
 const STORAGE_KEY = 'smit-portfolio-visitor'
 
-function loadStored(): { name: string; persona: Persona } | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    const data = JSON.parse(raw)
-    if (data?.name) return { name: data.name, persona: data.persona ?? null }
-  } catch { /* ignore corrupt data */ }
-  return null
-}
-
-function saveStored(name: string, persona: Persona) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, persona }))
-  } catch { /* storage full / disabled */ }
-}
-
 function clearStored() {
   try { localStorage.removeItem(STORAGE_KEY) } catch { /* noop */ }
 }
@@ -37,18 +21,15 @@ function clearStored() {
 const VisitorContext = createContext<VisitorContextType | null>(null)
 
 export function VisitorProvider({ children }: { children: React.ReactNode }) {
-  const stored = loadStored()
-  const [visitorName, setVisitorNameState] = useState<string | null>(stored?.name ?? null)
-  const [persona, setPersonaState] = useState<Persona>(stored?.persona ?? null)
-  // If we have stored persona, user already completed welcome → show portfolio on load
-  const [hasVisited, setHasVisited] = useState(!!stored?.persona)
-  const [isReturning] = useState(!!stored?.name)
+  // No persistence: every load/refresh starts from the beginning (welcome gate).
+  const [visitorName, setVisitorNameState] = useState<string | null>(null)
+  const [persona, setPersonaState] = useState<Persona>(null)
+  const [hasVisited, setHasVisited] = useState(false)
+  const [isReturning] = useState(false)
 
   useEffect(() => {
-    if (visitorName && persona) {
-      saveStored(visitorName, persona)
-    }
-  }, [visitorName, persona])
+    clearStored()
+  }, [])
 
   const setVisitorName = (name: string) => {
     const trimmed = name.trim()
