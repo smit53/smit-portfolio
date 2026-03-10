@@ -14,6 +14,22 @@ interface VisitorContextType {
 
 const STORAGE_KEY = 'smit-portfolio-visitor'
 
+function loadStored(): { name: string; persona: Persona } | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const data = JSON.parse(raw)
+    if (data?.name) return { name: data.name, persona: data.persona ?? null }
+  } catch { /* ignore corrupt data */ }
+  return null
+}
+
+function saveStored(name: string, persona: Persona) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, persona }))
+  } catch { /* storage full / disabled */ }
+}
+
 function clearStored() {
   try { localStorage.removeItem(STORAGE_KEY) } catch { /* noop */ }
 }
@@ -21,15 +37,18 @@ function clearStored() {
 const VisitorContext = createContext<VisitorContextType | null>(null)
 
 export function VisitorProvider({ children }: { children: React.ReactNode }) {
-  // No persistence: every load/refresh starts from the beginning (welcome gate).
-  const [visitorName, setVisitorNameState] = useState<string | null>(null)
-  const [persona, setPersonaState] = useState<Persona>(null)
+  const stored = loadStored()
+  const [visitorName, setVisitorNameState] = useState<string | null>(stored?.name ?? null)
+  const [persona, setPersonaState] = useState<Persona>(stored?.persona ?? null)
+  // Always show welcome gate on load; hasVisited becomes true only after they complete it this session
   const [hasVisited, setHasVisited] = useState(false)
-  const [isReturning] = useState(false)
+  const [isReturning] = useState(!!stored?.name)
 
   useEffect(() => {
-    clearStored()
-  }, [])
+    if (visitorName && persona) {
+      saveStored(visitorName, persona)
+    }
+  }, [visitorName, persona])
 
   const setVisitorName = (name: string) => {
     const trimmed = name.trim()

@@ -4,6 +4,7 @@ import { BarChart3, Code2, Rocket, Sparkles } from 'lucide-react'
 import { useVisitor, Persona } from '../context/VisitorContext'
 import MotionButton from './ui/MotionButton'
 import WelcomeBackground from './WelcomeBackground'
+import GridHoverEffect from './GridHoverEffect'
 
 const spring = { type: 'spring' as const, stiffness: 380, damping: 28 }
 const springBounce = { type: 'spring' as const, stiffness: 320, damping: 24 }
@@ -66,9 +67,16 @@ const WelcomeGate: React.FC = () => {
   const { visitorName, setVisitorName, isReturning, setPersona, resetVisitor } = useVisitor()
   const [nameInput, setNameInput] = useState('')
   const [isFocused, setIsFocused] = useState(false)
-  const [step, setStep] = useState<'name' | 'persona' | 'returning'>(
-    isReturning ? 'returning' : 'name'
+  const [step, setStep] = useState<'who' | 'name' | 'persona'>(
+    isReturning ? 'who' : 'name'
   )
+
+  const handleWhoContinue = () => setStep('persona')
+  const handleWhoSomeoneElse = () => {
+    resetVisitor()
+    setNameInput('')
+    setStep('name')
+  }
 
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -79,12 +87,6 @@ const WelcomeGate: React.FC = () => {
     }
   }
 
-  const handleContinueReturning = () => setStep('persona')
-  const handleStartFresh = () => {
-    resetVisitor()
-    setNameInput('')
-    setStep('name')
-  }
   const handlePersonaSelect = (p: Persona) => setPersona(p)
 
   return (
@@ -99,22 +101,31 @@ const WelcomeGate: React.FC = () => {
       }}
     >
       <WelcomeBackground />
+      <div className="absolute inset-0 z-[1]">
+        <GridHoverEffect
+          gridSize={22}
+          backgroundColor="transparent"
+          borderColor="rgba(255,255,255,0.05)"
+          borderWidth={1}
+          showCursor={false}
+        />
+      </div>
 
-      <div className="relative z-10 min-h-full flex flex-col items-center justify-center px-4 sm:px-10 lg:px-16 py-12 sm:py-20">
+      <div className="relative z-10 min-h-full flex flex-col items-center justify-center px-4 sm:px-10 lg:px-16 py-12 sm:py-20 pointer-events-none">
         <AnimatePresence mode="wait">
-          {step === 'returning' && (
+          {step === 'who' && visitorName && (
             <motion.div
-              key="returning"
+              key="who"
               {...pageTransition}
-              className="w-full max-w-xl mx-auto flex flex-col items-center text-center"
+              className="w-full max-w-xl mx-auto flex flex-col items-center text-center pointer-events-auto"
             >
               <motion.h1
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...spring, delay: 0.1 }}
-                className="font-sans text-4xl sm:text-6xl md:text-7xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight"
+                className="font-sans text-4xl sm:text-5xl md:text-6xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight"
               >
-                Hey again, {visitorName}.
+                Are you {visitorName} or someone else?
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
@@ -122,23 +133,19 @@ const WelcomeGate: React.FC = () => {
                 transition={{ ...spring, delay: 0.2 }}
                 className="text-zinc-500 dark:text-zinc-400 text-lg mt-6"
               >
-                Pick up where you left off?
+                Choose below to continue.
               </motion.p>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...spring, delay: 0.3 }}
-                className="mt-10 flex flex-col sm:flex-row gap-3 justify-center"
+                className="mt-12 flex flex-col sm:flex-row gap-4 justify-center"
               >
-                <MotionButton variant="primary" onClick={handleContinueReturning}>
-                  Continue
+                <MotionButton variant="primary" onClick={handleWhoContinue}>
+                  Yes, I'm {visitorName}
                 </MotionButton>
-                <MotionButton
-                  variant="ghost"
-                  onClick={handleStartFresh}
-                  className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 text-sm"
-                >
-                  Not {visitorName}? Start fresh
+                <MotionButton variant="outline" onClick={handleWhoSomeoneElse}>
+                  Someone else
                 </MotionButton>
               </motion.div>
             </motion.div>
@@ -148,7 +155,7 @@ const WelcomeGate: React.FC = () => {
             <motion.div
               key="name"
               {...pageTransition}
-              className="w-full max-w-2xl mx-auto flex flex-col items-center"
+              className="w-full max-w-2xl mx-auto flex flex-col items-center pointer-events-auto"
             >
               <motion.div
                 variants={{ visible: { transition: stagger } }}
@@ -213,7 +220,7 @@ const WelcomeGate: React.FC = () => {
             <motion.div
               key="persona"
               {...pageTransition}
-              className="w-full max-w-5xl mx-auto flex flex-col items-center py-6"
+              className="w-full max-w-5xl mx-auto flex flex-col items-center py-6 pointer-events-auto"
             >
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
