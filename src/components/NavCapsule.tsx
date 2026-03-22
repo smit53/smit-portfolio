@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Compass, Sun, Moon } from 'lucide-react'
+import { Compass } from 'lucide-react'
 import { useSection, SECTIONS } from '../context/SectionContext'
 import { useConsole } from '../context/ConsoleContext'
-import { useTheme } from '../context/ThemeContext'
+import ThemeToggle from './ThemeToggle'
 
 const SECTION_LABELS: Record<(typeof SECTIONS)[number], string> = {
   home: 'Home',
@@ -39,7 +39,6 @@ const NavCapsule: React.FC = () => {
   const [open, setOpen] = useState(false)
   const { currentSection, scrollToSection } = useSection()
   const { setOpen: setConsoleOpen } = useConsole()
-  const { theme, transitionState, toggleTheme } = useTheme()
   const ref = useRef<HTMLDivElement>(null)
   const leaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -71,11 +70,6 @@ const NavCapsule: React.FC = () => {
 
   const handleAssistant = () => {
     setConsoleOpen(true)
-    setOpen(false)
-  }
-
-  const handleThemeToggle = () => {
-    toggleTheme()
     setOpen(false)
   }
 
@@ -147,16 +141,13 @@ const NavCapsule: React.FC = () => {
                 </motion.button>
               ))}
               <motion.div variants={item} className="my-1.5 mx-2 border-t border-zinc-200/80 dark:border-zinc-600" />
-              <motion.button
+              <motion.div
                 variants={item}
-                type="button"
-                onClick={handleThemeToggle}
-                disabled={transitionState !== 'idle'}
-                className="w-full text-left py-2.5 px-4 rounded-[1.25rem] text-[13px] text-zinc-600 dark:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-700/80 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors duration-200 flex items-center gap-2 disabled:opacity-60"
+                className="flex items-center justify-between px-4 py-2"
               >
-                {theme === 'light' ? <Moon className="w-4 h-4 shrink-0" /> : <Sun className="w-4 h-4 shrink-0" />}
-                {theme === 'light' ? 'Dark mode' : 'Light mode'}
-              </motion.button>
+                <span className="text-[13px] text-zinc-500 dark:text-zinc-400">Theme</span>
+                <ThemeToggle />
+              </motion.div>
               <motion.button
                 variants={item}
                 type="button"

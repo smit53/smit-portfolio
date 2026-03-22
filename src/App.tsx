@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { HashRouter as Router } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { VisitorProvider, useVisitor } from './context/VisitorContext'
@@ -5,6 +6,7 @@ import { SectionProvider, useSection } from './context/SectionContext'
 import { ConsoleProvider } from './context/ConsoleContext'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
 import NavCapsule from './components/NavCapsule'
+import EyeFollowButton from './components/EyeFollowButton'
 import Hero from './components/Hero'
 import Interests from './components/Interests'
 import Capabilities from './components/Capabilities'
@@ -20,23 +22,72 @@ import RayScramble from './components/RayScramble'
 import FlowScramble from './components/FlowScramble'
 import RippleScramble from './components/RippleScramble'
 import HeadingRevealLayout from './components/HeadingRevealLayout'
-import SectionNavButtons from './components/SectionNavButtons'
-import SideNav from './components/SideNav'
+
 import WelcomeGate from './components/WelcomeGate'
 import DevConsole from './components/DevConsole'
 import CustomCursor from './components/CustomCursor'
 
-const CONTENT_EXIT = { opacity: 0, y: 24 }
-const CONTENT_INITIAL = { opacity: 0, y: 20 }
+const CONTENT_EXIT = { opacity: 0, y: 32 }
+const CONTENT_INITIAL = { opacity: 0, y: 32 }
 const CONTENT_ANIMATE = { opacity: 1, y: 0 }
-const CONTENT_TRANSITION = { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
-const BG_TRANSITION = { duration: 0.35, ease: [0.22, 1, 0.36, 1] }
+const CONTENT_TRANSITION = { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+const BG_TRANSITION = { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+
+/**
+ * Navigates between sections on wheel/trackpad scroll.
+ * Only fires when the scroll target is NOT a scrollable container mid-scroll
+ * (i.e. at the top edge scrolling up, or at the bottom edge scrolling down).
+ */
+function useScrollNavigation() {
+  const { goToNextSection, goToPrevSection } = useSection()
+  const cooldown = useRef(false)
+
+  useEffect(() => {
+    const navigate = (dir: 'next' | 'prev') => {
+      if (cooldown.current) return
+      cooldown.current = true
+      dir === 'next' ? goToNextSection() : goToPrevSection()
+      setTimeout(() => { cooldown.current = false }, 1100)
+    }
+
+    const handleWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) < 25) return // ignore tiny nudges
+
+      // Walk up the DOM to find the nearest scrollable ancestor
+      let el = e.target as HTMLElement | null
+      let scrollable: HTMLElement | null = null
+      while (el && el !== document.body) {
+        const oy = getComputedStyle(el).overflowY
+        if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 2) {
+          scrollable = el
+          break
+        }
+        el = el.parentElement
+      }
+
+      if (scrollable) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollable
+        const atTop    = scrollTop <= 2
+        const atBottom = scrollTop + clientHeight >= scrollHeight - 2
+        if (e.deltaY > 0 && atBottom) navigate('next')
+        else if (e.deltaY < 0 && atTop) navigate('prev')
+        // Otherwise let the element scroll normally — do nothing
+      } else {
+        // No scrollable ancestor — treat the wheel as a page-switch intent
+        if (e.deltaY > 0) navigate('next')
+        else if (e.deltaY < 0) navigate('prev')
+      }
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: true })
+    return () => window.removeEventListener('wheel', handleWheel)
+  }, [goToNextSection, goToPrevSection])
+}
 
 function PortfolioContent() {
   const { visitorName, hasVisited } = useVisitor()
   const { currentSection } = useSection()
-
-  const welcomeLine = visitorName ? `${visitorName} — glad you're here.` : "Glad you're here."
+  useScrollNavigation()
 
   return (
     <>
@@ -59,7 +110,7 @@ function PortfolioContent() {
               {currentSection && (
                 <motion.div
                   key={currentSection}
-                  className="fixed inset-0 z-[50] pointer-events-none"
+                  className="fixed inset-0 pointer-events-none"
                   initial={{ opacity: 0, x: 32 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -32 }}
@@ -76,8 +127,6 @@ function PortfolioContent() {
             </AnimatePresence>
 
             <NavCapsule />
-            <SideNav />
-            <SectionNavButtons />
 
             <main className="flex-1 min-h-0 w-full h-full min-h-full-dvh overflow-hidden flex flex-col">
               <AnimatePresence mode="wait">
@@ -85,22 +134,14 @@ function PortfolioContent() {
                   <motion.section
                     key="home"
                     id="home"
-                    className="relative flex flex-col justify-center flex-1 w-full min-h-full-dvh bg-white dark:bg-black overflow-y-auto overflow-x-hidden px-6 sm:px-12 lg:px-16 xl:px-24 py-12 sm:py-16"
+                    className="relative z-[1] flex flex-col justify-center flex-1 w-full min-h-full-dvh overflow-y-auto overflow-x-hidden px-6 sm:px-12 lg:px-16 xl:px-24 py-12 sm:py-16"
                     initial={CONTENT_INITIAL}
                     animate={CONTENT_ANIMATE}
                     exit={CONTENT_EXIT}
                     transition={CONTENT_TRANSITION}
                   >
                     <div className="relative z-10 w-full flex flex-col items-stretch text-left">
-                      <HeadingRevealLayout
-                        heading={
-                          <p className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-[1.05] tracking-tighter text-zinc-700 dark:text-zinc-300 text-center w-full">
-                            {welcomeLine}
-                          </p>
-                        }
-                      >
-                        <Hero visitorName={visitorName} skipWelcomeLine />
-                      </HeadingRevealLayout>
+                      <Hero visitorName={visitorName} />
                     </div>
                   </motion.section>
                 )}
@@ -108,13 +149,13 @@ function PortfolioContent() {
                 {currentSection === 'interests' && (
                   <motion.div
                     key="interests"
-                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    className="relative z-[1] flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
                     initial={CONTENT_INITIAL}
                     animate={CONTENT_ANIMATE}
                     exit={CONTENT_EXIT}
                     transition={CONTENT_TRANSITION}
                   >
-                    <PageSection id="interests" title="Interests" subtitle="What drives me beyond the screen." headingReveal>
+                    <PageSection id="interests" title="Interests" subtitle="What drives me beyond the screen." headingReveal noBg>
                       <Interests />
                     </PageSection>
                   </motion.div>
@@ -123,13 +164,13 @@ function PortfolioContent() {
                 {currentSection === 'capabilities' && (
                   <motion.div
                     key="capabilities"
-                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    className="relative z-[1] flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
                     initial={CONTENT_INITIAL}
                     animate={CONTENT_ANIMATE}
                     exit={CONTENT_EXIT}
                     transition={CONTENT_TRANSITION}
                   >
-                    <PageSection id="capabilities" title="Capabilities" subtitle="Technologies and tools I work with." headingReveal>
+                    <PageSection id="capabilities" title="Capabilities" subtitle="Technologies and tools I work with." headingReveal noBg>
                       <Capabilities />
                     </PageSection>
                   </motion.div>
@@ -138,13 +179,13 @@ function PortfolioContent() {
                 {currentSection === 'work-ethic' && (
                   <motion.div
                     key="work-ethic"
-                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    className="relative z-[1] flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
                     initial={CONTENT_INITIAL}
                     animate={CONTENT_ANIMATE}
                     exit={CONTENT_EXIT}
                     transition={CONTENT_TRANSITION}
                   >
-                    <PageSection id="work-ethic" title="How I work" subtitle="How I approach problems and partnerships." headingReveal>
+                    <PageSection id="work-ethic" title="How I work" subtitle="How I approach problems and partnerships." headingReveal noBg>
                       <WorkEthic />
                     </PageSection>
                   </motion.div>
@@ -153,13 +194,13 @@ function PortfolioContent() {
                 {currentSection === 'work' && (
                   <motion.div
                     key="work"
-                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    className="relative z-[1] flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
                     initial={CONTENT_INITIAL}
                     animate={CONTENT_ANIMATE}
                     exit={CONTENT_EXIT}
                     transition={CONTENT_TRANSITION}
                   >
-                    <PageSection id="work" title="Work" subtitle="Experience and selected projects." contentFullWidth headingReveal>
+                    <PageSection id="work" title="Work" subtitle="Experience and selected projects." contentFullWidth headingReveal noBg>
                       <Work />
                     </PageSection>
                   </motion.div>
@@ -168,7 +209,7 @@ function PortfolioContent() {
                 {currentSection === 'contact' && (
                   <motion.div
                     key="contact"
-                    className="flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
+                    className="relative z-[1] flex-1 min-h-0 w-full h-full-dvh overflow-y-auto overflow-x-hidden py-8 pb-16"
                     initial={CONTENT_INITIAL}
                     animate={CONTENT_ANIMATE}
                     exit={CONTENT_EXIT}
@@ -176,14 +217,14 @@ function PortfolioContent() {
                   >
                     <section
                       id="contact"
-                      className="relative flex flex-col w-full min-h-full bg-white dark:bg-black px-4 sm:px-12 lg:px-16 xl:px-24 py-10 sm:py-14"
+                      className="relative flex flex-col w-full min-h-full px-4 sm:px-12 lg:px-16 xl:px-24 py-10 sm:py-14"
                     >
                       <div className="w-full flex flex-col flex-1 min-h-0">
                         <HeadingRevealLayout
                           heading={
                             <div className="w-full text-left">
-                              <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Keep in touch</h2>
-                              <p className="text-zinc-600 dark:text-zinc-400 text-xl sm:text-2xl mt-4 sm:mt-5 max-w-3xl">Open to opportunities and conversations.</p>
+                              <EyeFollowButton variant="heading" label="Keep in touch" href="" />
+                              <p className="text-zinc-800 dark:text-zinc-200 text-xl sm:text-2xl mt-4 sm:mt-5 max-w-3xl">Open to opportunities and conversations.</p>
                             </div>
                           }
                         >

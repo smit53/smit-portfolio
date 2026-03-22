@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
-const HEADING_HOLD_MS = 700
-const HEADING_MOVE_DURATION = 0.55
-const CONTENT_REVEAL_DELAY = 0.2
+const CONTENT_DELAY_MS = 500
 
 interface HeadingRevealLayoutProps {
   heading: React.ReactNode
@@ -12,45 +10,38 @@ interface HeadingRevealLayoutProps {
 }
 
 /**
- * Heading appears centered first, then the heading block shrinks to top and content flows below (no overlap).
- * All elements are in document flow so layout stays flexible and professional.
+ * Heading slides in at the top, then content fades in below it.
+ * No center-then-move transition — clean and predictable layout.
  */
 export default function HeadingRevealLayout({ heading, children, className = '' }: HeadingRevealLayoutProps) {
-  const [phase, setPhase] = useState<'center' | 'reveal'>('center')
+  const [revealed, setRevealed] = useState(false)
 
   useEffect(() => {
-    const t = setTimeout(() => setPhase('reveal'), HEADING_HOLD_MS)
+    const t = setTimeout(() => setRevealed(true), CONTENT_DELAY_MS)
     return () => clearTimeout(t)
   }, [])
 
   return (
     <div className={`flex flex-col min-h-full w-full ${className}`}>
-      {/* Heading block: in flow. When center = tall and centered; when reveal = compact at top. */}
+      {/* Heading — slides in once from below, stays at top */}
       <motion.div
-        className="flex w-full justify-start shrink-0"
-        style={{ alignItems: phase === 'center' ? 'center' : 'flex-start' }}
-        initial={{ minHeight: '65vh' }}
-        animate={{ minHeight: phase === 'center' ? '65vh' : '8rem' }}
-        transition={{ duration: HEADING_MOVE_DURATION, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full shrink-0 pt-0 sm:pt-6"
+        initial={{ opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="w-full pt-0 sm:pt-6">
-          {heading}
-        </div>
+        {heading}
       </motion.div>
 
-      {/* Content: always in flow below heading, fades in when revealed */}
+      {/* Content — fades in after a short delay */}
       <motion.div
         className="flex-1 min-h-0 w-full flex flex-col text-left mt-6 sm:mt-8"
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 18 }}
         animate={{
-          opacity: phase === 'reveal' ? 1 : 0,
-          y: phase === 'reveal' ? 0 : 16,
+          opacity: revealed ? 1 : 0,
+          y: revealed ? 0 : 18,
         }}
-        transition={{
-          duration: 0.45,
-          delay: phase === 'reveal' ? CONTENT_REVEAL_DELAY : 0,
-          ease: [0.22, 1, 0.36, 1],
-        }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         {children}
       </motion.div>

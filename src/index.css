@@ -59,11 +59,11 @@
   .fluid-text {
     background: linear-gradient(
       110deg,
-      rgb(24 24 27) 0%,
-      rgb(39 39 42) 25%,
+      rgb(0 0 0) 0%,
+      rgb(24 24 27) 25%,
       rgb(255 107 0 / 0.9) 50%,
-      rgb(63 63 70) 75%,
-      rgb(24 24 27) 100%
+      rgb(24 24 27) 75%,
+      rgb(0 0 0) 100%
     );
     background-size: 200% 100%;
     -webkit-background-clip: text;
@@ -75,11 +75,11 @@
   .dark .fluid-text {
     background: linear-gradient(
       110deg,
-      rgb(244 244 245) 0%,
-      rgb(228 228 231) 25%,
+      rgb(255 255 255) 0%,
+      rgb(244 244 245) 25%,
       rgb(255 140 56 / 0.95) 50%,
-      rgb(212 212 216) 75%,
-      rgb(244 244 245) 100%
+      rgb(244 244 245) 75%,
+      rgb(255 255 255) 100%
     );
     background-size: 200% 100%;
     -webkit-background-clip: text;

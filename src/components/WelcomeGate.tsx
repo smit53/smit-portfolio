@@ -125,7 +125,7 @@ const WelcomeGate: React.FC = () => {
                 transition={{ ...spring, delay: 0.1 }}
                 className="font-sans text-4xl sm:text-5xl md:text-6xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight"
               >
-                Are you {visitorName} or someone else?
+                Welcome back, {visitorName}!
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
@@ -133,7 +133,7 @@ const WelcomeGate: React.FC = () => {
                 transition={{ ...spring, delay: 0.2 }}
                 className="text-zinc-500 dark:text-zinc-400 text-lg mt-6"
               >
-                Choose below to continue.
+                Good to see you again. Still you, or is someone else taking a look?
               </motion.p>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -142,7 +142,7 @@ const WelcomeGate: React.FC = () => {
                 className="mt-12 flex flex-col sm:flex-row gap-4 justify-center"
               >
                 <MotionButton variant="primary" onClick={handleWhoContinue}>
-                  Yes, I'm {visitorName}
+                  Yep, that's me
                 </MotionButton>
                 <MotionButton variant="outline" onClick={handleWhoSomeoneElse}>
                   Someone else
@@ -169,21 +169,21 @@ const WelcomeGate: React.FC = () => {
                   className="inline-flex items-center gap-2 text-brand-500 dark:text-brand-400 font-medium text-sm tracking-wide uppercase mb-5"
                 >
                   <Sparkles className="w-4 h-4" />
-                  Welcome
+                  Hey there
                 </motion.span>
                 <motion.h1
                   variants={nameStepTitleVariants}
                   transition={spring}
                   className="font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight leading-[1.08] max-w-2xl"
                 >
-                  Hi there — what should I call you?
+                  What's your name?
                 </motion.h1>
                 <motion.p
                   variants={nameStepSubVariants}
                   transition={spring}
                   className="text-zinc-500 dark:text-zinc-400 text-lg mt-5 max-w-md"
                 >
-                  Just your first name is perfect. I'll tailor the tour to you.
+                  First name's all I need — I'll make this feel a little more personal.
                 </motion.p>
               </motion.div>
 
@@ -200,7 +200,7 @@ const WelcomeGate: React.FC = () => {
                   onChange={(e) => setNameInput(e.target.value)}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
-                  placeholder="Your name"
+                  placeholder="e.g. Alex"
                   className="flex-1 min-w-0 px-5 py-4 rounded-2xl bg-white/80 dark:bg-zinc-800/80 border-2 border-zinc-200 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 text-lg font-medium focus:outline-none focus:border-brand-500/50 dark:focus:border-brand-400/50 transition-colors shadow-sm"
                   style={{
                     borderColor: isFocused ? 'rgba(255, 107, 0, 0.5)' : undefined,
@@ -229,50 +229,34 @@ const WelcomeGate: React.FC = () => {
                 className="text-center max-w-xl mb-4"
               >
                 <h1 className="font-sans text-3xl sm:text-4xl md:text-5xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight leading-[1.15]">
-                  How would you like to explore?
+                  Nice to meet you! What brings you here?
                 </h1>
                 <p className="text-zinc-500 dark:text-zinc-400 mt-4 text-lg">
-                  Pick one — I'll highlight what matters most to you. You can always scroll around
-                  after.
+                  No wrong answer — just helps me show you the most relevant stuff first.
                 </p>
               </motion.div>
 
-              {/* Deconstructed: cards at different vertical offsets */}
               <motion.div
-                className="mt-12 sm:mt-16 w-full grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6 max-w-4xl"
+                className="mt-10 sm:mt-12 w-full flex flex-col sm:flex-row gap-4 justify-center items-stretch max-w-3xl"
               >
                 {personas.map((p, i) => {
-                  const offsetY = i === 0 ? -12 : i === 1 ? 0 : 14
                   return (
                   <motion.button
                     key={p.id}
                     type="button"
                     initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: offsetY }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ ...springBounce, delay: 0.18 + i * 0.08 }}
                     onClick={() => handlePersonaSelect(p.id)}
-                    className="group text-left p-6 sm:p-7 rounded-2xl sm:rounded-3xl border-2 border-zinc-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-800/80 hover:border-brand-500/50 dark:hover:border-brand-500/40 hover:bg-brand-500/5 dark:hover:bg-brand-500/10 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-950 backdrop-blur-sm"
-                    whileHover={{
-                      y: offsetY - 8,
-                      scale: 1.02,
-                      transition: springBounce,
-                    }}
+                    className="group flex-1 text-left px-6 py-5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white/60 dark:bg-zinc-800/60 hover:border-brand-500/60 dark:hover:border-brand-500/40 hover:bg-brand-500/5 dark:hover:bg-brand-500/10 transition-all duration-200 focus:outline-none backdrop-blur-sm"
+                    whileHover={{ y: -4, transition: springBounce }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <motion.span
-                      className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-700 group-hover:bg-brand-500/15 dark:group-hover:bg-brand-500/20 text-zinc-600 dark:text-zinc-400 group-hover:text-brand-500 dark:group-hover:text-brand-400 transition-colors mb-4"
-                      whileHover={{ rotate: 6, scale: 1.05 }}
-                      transition={spring}
-                    >
-                      <p.icon className="w-6 h-6" strokeWidth={1.5} />
-                    </motion.span>
-                    <p className="font-semibold text-zinc-900 dark:text-zinc-100 text-base sm:text-lg">
+                    <p.icon className="w-5 h-5 text-zinc-400 group-hover:text-brand-500 dark:group-hover:text-brand-400 transition-colors mb-3" strokeWidth={1.5} />
+                    <p className="font-semibold text-zinc-900 dark:text-zinc-100 text-base">
                       {p.label}
                     </p>
-                    <p className="font-medium text-brand-500 dark:text-brand-400 text-sm mt-1">
-                      {p.headline}
-                    </p>
-                    <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-2 leading-relaxed">
+                    <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1 leading-relaxed">
                       {p.description}
                     </p>
                   </motion.button>
@@ -284,9 +268,9 @@ const WelcomeGate: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.55 }}
-                className="mt-10 text-zinc-400 dark:text-zinc-500 text-sm text-center"
+                className="mt-8 text-zinc-400 dark:text-zinc-500 text-sm text-center"
               >
-                No pressure — just pick the closest fit and we'll get started.
+                You can always explore everything freely after.
               </motion.p>
             </motion.div>
           )}

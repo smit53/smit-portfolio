@@ -1,247 +1,334 @@
-import { useRef, useCallback, useState } from 'react'
-import { motion, useSpring, AnimatePresence } from 'framer-motion'
+/**
+ * Capabilities — physics-based icon field.
+ *
+ * - Cursor creates a repulsion force field that pushes icons away
+ * - Icons spring back to their origin positions (spring + damping)
+ * - Click anywhere to fire a shockwave that scatters all nearby icons
+ * - Proximity glow: icons near the cursor illuminate with their brand color
+ * - Nearest icon tooltip always visible as you move around
+ * - Icons are grouped into clusters by category
+ */
 
-interface CategoryProof {
-  bullets: string[]
-  depth: 'familiar' | 'proficient' | 'expert'
-}
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  SiPython, SiJavascript, SiTypescript, SiGo, SiR, SiGnubash, SiApachegroovy,
+  SiKubernetes, SiDocker, SiArgo, SiJenkins, SiGithubactions,
+  SiTensorflow, SiMlflow, SiApacheairflow, SiMongodb, SiPostgresql, SiNeo4J,
+  SiApachecassandra, SiMysql,
+  SiPrometheus, SiGrafana, SiSplunk, SiDatadog, SiPagerduty, SiJira,
+  SiGitlab, SiRedis, SiQlik,
+} from 'react-icons/si'
+import { Cloud, Database, Globe, Activity, BarChart2, PieChart, FlaskConical } from 'lucide-react'
 
-interface Category {
-  label: string
-  items: string[]
-  proof: CategoryProof
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyIcon = React.ComponentType<any>
 
-const categories: Category[] = [
-  {
-    label: 'Languages',
-    items: ['Python', 'JavaScript', 'Go', 'R', 'SQL', 'Groovy', 'Bash'],
-    proof: {
-      bullets: [
-        'Python is my primary language for ML pipelines, automation scripts, and backend services',
-        'JavaScript/TypeScript across React frontends and Node.js microservices',
-        'Go for performance-critical CLI tooling and Kubernetes operators',
-      ],
-      depth: 'expert',
-    },
-  },
-  {
-    label: 'Infrastructure & Cloud',
-    items: ['AWS', 'Azure', 'Kubernetes', 'Docker', 'Argo CD', 'CI/CD', 'Jenkins'],
-    proof: {
-      bullets: [
-        'Managed CI/CD for 12+ microservices at Intuit with GitLab and Jenkins',
-        'Automated disaster recovery and rollback pipelines for production K8s clusters',
-        'Cost-optimized MySQL footprint through vulnerability and usage analysis',
-      ],
-      depth: 'expert',
-    },
-  },
-  {
-    label: 'Data & ML',
-    items: ['TensorFlow', 'MLflow', 'Airflow', 'MongoDB', 'PostgreSQL', 'Neo4j', 'Cassandra', 'MySQL'],
-    proof: {
-      bullets: [
-        'Built LSTM + ensemble forecasting pipelines with TensorFlow for Walmart data',
-        'MLflow for experiment tracking and model versioning across team projects',
-        'PostgreSQL query optimization yielding ~30% search performance gains',
-      ],
-      depth: 'proficient',
-    },
-  },
-  {
-    label: 'Observability & Ops',
-    items: ['Prometheus', 'Grafana', 'Wavefront', 'Splunk', 'Datadog', 'PagerDuty', 'JIRA'],
-    proof: {
-      bullets: [
-        'AI-powered incident prevention using Prometheus and CloudWatch metric analysis',
-        'On-call support and incident response for QuickBooks Time and Payroll',
-        'Built environment drift detection and reporting for microservices analytics',
-      ],
-      depth: 'expert',
-    },
-  },
-  {
-    label: 'Tools & Practices',
-    items: ['Playwright', 'GitLab', 'REST API', 'Redis'],
-    proof: {
-      bullets: [
-        'Playwright end-to-end test suites for AI agent validation on QuickBooks',
-        'GitLab CI/CD pipelines for automated testing, deployment, and rollback',
-      ],
-      depth: 'proficient',
-    },
-  },
-  {
-    label: 'Analytics & BI',
-    items: ['Tableau', 'Power BI', 'Qlik Sense'],
-    proof: {
-      bullets: [
-        'Tableau dashboards that drove 35% user engagement increase at IU Ride',
-        'Dashboard migration from SISENSE to Tableau and Power BI with automated reports',
-      ],
-      depth: 'familiar',
-    },
-  },
+interface IconItem { name: string; Icon: AnyIcon; color: string }
+
+const ALL_ICONS: IconItem[] = [
+  { name: 'Python',      Icon: SiPython,          color: '#3776AB' },
+  { name: 'JavaScript',  Icon: SiJavascript,      color: '#F7DF1E' },
+  { name: 'TypeScript',  Icon: SiTypescript,      color: '#3178C6' },
+  { name: 'Go',          Icon: SiGo,              color: '#00ADD8' },
+  { name: 'R',           Icon: SiR,               color: '#276DC3' },
+  { name: 'SQL',         Icon: Database,          color: '#64748b' },
+  { name: 'Groovy',      Icon: SiApachegroovy,    color: '#4298B8' },
+  { name: 'Bash',        Icon: SiGnubash,         color: '#4EAA25' },
+  { name: 'AWS',         Icon: Cloud,             color: '#FF9900' },
+  { name: 'Azure',       Icon: Cloud,             color: '#0078D4' },
+  { name: 'Kubernetes',  Icon: SiKubernetes,      color: '#326CE5' },
+  { name: 'Docker',      Icon: SiDocker,          color: '#2496ED' },
+  { name: 'Argo CD',     Icon: SiArgo,            color: '#EF7B4D' },
+  { name: 'CI/CD',       Icon: SiGithubactions,   color: '#2088FF' },
+  { name: 'Jenkins',     Icon: SiJenkins,         color: '#D33833' },
+  { name: 'TensorFlow',  Icon: SiTensorflow,      color: '#FF6F00' },
+  { name: 'MLflow',      Icon: SiMlflow,          color: '#0194E2' },
+  { name: 'Airflow',     Icon: SiApacheairflow,   color: '#017CEE' },
+  { name: 'MongoDB',     Icon: SiMongodb,         color: '#47A248' },
+  { name: 'PostgreSQL',  Icon: SiPostgresql,      color: '#336791' },
+  { name: 'Neo4j',       Icon: SiNeo4J,           color: '#008CC1' },
+  { name: 'Cassandra',   Icon: SiApachecassandra, color: '#1287B1' },
+  { name: 'MySQL',       Icon: SiMysql,           color: '#4479A1' },
+  { name: 'Redis',       Icon: SiRedis,           color: '#DC382D' },
+  { name: 'Prometheus',  Icon: SiPrometheus,      color: '#E6522C' },
+  { name: 'Grafana',     Icon: SiGrafana,         color: '#F46800' },
+  { name: 'Wavefront',   Icon: Activity,          color: '#00B4E2' },
+  { name: 'Splunk',      Icon: SiSplunk,          color: '#65A637' },
+  { name: 'Datadog',     Icon: SiDatadog,         color: '#632CA6' },
+  { name: 'PagerDuty',   Icon: SiPagerduty,       color: '#25C151' },
+  { name: 'JIRA',        Icon: SiJira,            color: '#0052CC' },
+  { name: 'Playwright',  Icon: FlaskConical,      color: '#2EAD33' },
+  { name: 'GitLab',      Icon: SiGitlab,          color: '#FC6D26' },
+  { name: 'REST API',    Icon: Globe,             color: '#6366F1' },
+  { name: 'Tableau',     Icon: BarChart2,         color: '#E97627' },
+  { name: 'Power BI',    Icon: PieChart,          color: '#F2C811' },
+  { name: 'Qlik',        Icon: SiQlik,            color: '#009845' },
 ]
 
-const depthLabels: Record<string, { label: string; width: string }> = {
-  familiar: { label: 'Familiar', width: 'w-1/3' },
-  proficient: { label: 'Proficient', width: 'w-2/3' },
-  expert: { label: 'Expert', width: 'w-full' },
+// ─── Clusters ─────────────────────────────────────────────────────────────────
+const CLUSTERS = [
+  { label: 'Languages',     cx: 18, cy: 28, names: ['Python','JavaScript','TypeScript','Go','R','SQL','Groovy','Bash'] },
+  { label: 'Cloud & Infra', cx: 78, cy: 26, names: ['AWS','Azure','Kubernetes','Docker','Argo CD','CI/CD','Jenkins'] },
+  { label: 'AI & ML',       cx: 50, cy: 46, names: ['TensorFlow','MLflow','Airflow'] },
+  { label: 'Databases',     cx: 20, cy: 74, names: ['MongoDB','PostgreSQL','Neo4j','Cassandra','MySQL','Redis'] },
+  { label: 'Observability', cx: 74, cy: 72, names: ['Prometheus','Grafana','Wavefront','Splunk','Datadog','PagerDuty'] },
+  { label: 'Tools',         cx: 50, cy: 86, names: ['JIRA','Playwright','GitLab','REST API','Tableau','Power BI','Qlik'] },
+]
+
+// ─── Deterministic pseudo-random ──────────────────────────────────────────────
+function sr(seed: number) {
+  const x = Math.sin(seed + 1.618) * 10000
+  return x - Math.floor(x)
 }
 
-const Capabilities: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const springConfig = { damping: 30, stiffness: 200 }
-  const rotateX = useSpring(0, springConfig)
-  const rotateY = useSpring(0, springConfig)
-  const [expandedCat, setExpandedCat] = useState<string | null>(null)
-  const [glowPos, setGlowPos] = useState({ x: 0, y: 0 })
-  const [showGlow, setShowGlow] = useState(false)
-  const leaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+// ─── Build flat layout array ───────────────────────────────────────────────────
+interface LayoutItem { icon: IconItem; ox: number; oy: number; clusterLabel: string }
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const el = containerRef.current
-      if (!el) return
-      const rect = el.getBoundingClientRect()
-      const x = (e.clientX - rect.left) / rect.width - 0.5
-      const y = (e.clientY - rect.top) / rect.height - 0.5
-      rotateX.set(y * 4)
-      rotateY.set(-x * 4)
-      setGlowPos({ x: e.clientX - rect.left, y: e.clientY - rect.top })
-      setShowGlow(true)
-    },
-    [rotateX, rotateY]
-  )
+function buildLayout(): LayoutItem[] {
+  const items: LayoutItem[] = []
+  for (const cluster of CLUSTERS) {
+    const n = cluster.names.length
+    cluster.names.forEach((name, i) => {
+      const icon = ALL_ICONS.find(ic => ic.name === name)!
+      const angle = (i / n) * Math.PI * 2 + sr(i * 13) * 0.4
+      const rx = 16 + sr(i * 7 + 1) * 7
+      const ry = 13 + sr(i * 7 + 2) * 5
+      items.push({
+        icon,
+        ox: Math.max(3, Math.min(95, cluster.cx + Math.cos(angle) * rx)),
+        oy: Math.max(3, Math.min(95, cluster.cy + Math.sin(angle) * ry)),
+        clusterLabel: cluster.label,
+      })
+    })
+  }
+  return items
+}
 
-  const handleMouseLeave = useCallback(() => {
-    rotateX.set(0)
-    rotateY.set(0)
-    setShowGlow(false)
-  }, [rotateX, rotateY])
+const LAYOUT = buildLayout()
 
-  const handleCategoryEnter = useCallback((label: string) => {
-    if (leaveTimerRef.current) {
-      clearTimeout(leaveTimerRef.current)
-      leaveTimerRef.current = null
+// ─── Physics constants ─────────────────────────────────────────────────────────
+const REPEL_R    = 155
+const REPEL_STR  = 15
+const SPRING_K   = 0.075
+const DAMP       = 0.82
+const WAVE_R     = 380
+const WAVE_STR   = 50
+
+// ─── Component ────────────────────────────────────────────────────────────────
+export default function Capabilities() {
+  const containerRef  = useRef<HTMLDivElement>(null)
+  const dispRefs      = useRef<(HTMLDivElement | null)[]>([])   // displacement div (RAF updates this)
+  const cardRefs      = useRef<(HTMLDivElement | null)[]>([])   // visual card (for glow/scale)
+  const physics       = useRef(LAYOUT.map(() => ({ x: 0, y: 0, vx: 0, vy: 0 })))
+  const mouseRef      = useRef({ x: -9999, y: -9999 })
+  const [nearest, setNearest]   = useState<number | null>(null)
+  const [ripples,  setRipples]  = useState<{ id: number; x: number; y: number }[]>([])
+  const rippleId = useRef(0)
+
+  useEffect(() => {
+    let raf: number
+    let lastNearest = -1
+
+    function tick() {
+      const container = containerRef.current
+      if (!container) { raf = requestAnimationFrame(tick); return }
+
+      const cRect = container.getBoundingClientRect()
+      const mx = mouseRef.current.x - cRect.left
+      const my = mouseRef.current.y - cRect.top
+      const ph = physics.current
+
+      let closestDist = Infinity
+      let closestIdx  = -1
+
+      for (let i = 0; i < LAYOUT.length; i++) {
+        const p   = ph[i]
+        const lay = LAYOUT[i]
+
+        // Actual icon center in container coords
+        const icx = (lay.ox / 100) * cRect.width  + p.x
+        const icy = (lay.oy / 100) * cRect.height + p.y
+        const dx  = icx - mx
+        const dy  = icy - my
+        const dist = Math.sqrt(dx * dx + dy * dy)
+
+        // Repulsion
+        if (dist < REPEL_R && dist > 0) {
+          const f = (1 - dist / REPEL_R) * REPEL_STR
+          p.vx += (dx / dist) * f
+          p.vy += (dy / dist) * f
+        }
+
+        // Spring back to origin
+        p.vx += -p.x * SPRING_K
+        p.vy += -p.y * SPRING_K
+
+        p.vx *= DAMP
+        p.vy *= DAMP
+        p.x  += p.vx
+        p.y  += p.vy
+
+        // Apply displacement directly to DOM
+        const dispEl = dispRefs.current[i]
+        if (dispEl) dispEl.style.transform = `translate(${p.x}px,${p.y}px)`
+
+        // Proximity glow + scale on the card element
+        const cardEl = cardRefs.current[i]
+        if (cardEl) {
+          const prox = Math.max(0, 1 - dist / REPEL_R)
+          const glowAlpha = Math.round(prox * 200).toString(16).padStart(2, '0')
+          cardEl.style.boxShadow = prox > 0.01
+            ? `0 0 ${16 + prox * 28}px ${lay.icon.color}${glowAlpha}, 0 6px 24px rgba(0,0,0,0.12)`
+            : `0 2px 12px rgba(0,0,0,0.08)`
+          cardEl.style.transform = `scale(${1 + prox * 0.18})`
+        }
+
+        if (dist < closestDist) { closestDist = dist; closestIdx = i }
+      }
+
+      const newNearest = closestDist < 90 ? closestIdx : -1
+      if (newNearest !== lastNearest) {
+        lastNearest = newNearest
+        setNearest(newNearest === -1 ? null : newNearest)
+      }
+
+      raf = requestAnimationFrame(tick)
     }
-    setExpandedCat(label)
+
+    raf = requestAnimationFrame(tick)
+
+    const onMove = (e: MouseEvent) => { mouseRef.current = { x: e.clientX, y: e.clientY } }
+    const onLeave = () => { mouseRef.current = { x: -9999, y: -9999 } }
+
+    const onTouch = (e: TouchEvent) => {
+      const t = e.touches[0]
+      mouseRef.current = { x: t.clientX, y: t.clientY }
+    }
+
+    const onClick = (e: MouseEvent) => {
+      const container = containerRef.current
+      if (!container) return
+      const cRect = container.getBoundingClientRect()
+      const mx = e.clientX - cRect.left
+      const my = e.clientY - cRect.top
+
+      // Shockwave
+      const ph = physics.current
+      for (let i = 0; i < LAYOUT.length; i++) {
+        const p   = ph[i]
+        const lay = LAYOUT[i]
+        const ox  = (lay.ox / 100) * cRect.width
+        const oy  = (lay.oy / 100) * cRect.height
+        const dx  = ox - mx
+        const dy  = oy - my
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        if (dist < WAVE_R && dist > 0) {
+          const f = (1 - dist / WAVE_R) * WAVE_STR
+          p.vx += (dx / dist) * f
+          p.vy += (dy / dist) * f
+        }
+      }
+
+      // Visual ripple
+      const id = rippleId.current++
+      setRipples(r => [...r, { id, x: mx, y: my }])
+      setTimeout(() => setRipples(r => r.filter(rp => rp.id !== id)), 800)
+    }
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('touchmove', onTouch, { passive: true })
+    window.addEventListener('touchend', onLeave)
+    const el = containerRef.current
+    el?.addEventListener('click', onClick)
+    el?.addEventListener('mouseleave', onLeave)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('touchmove', onTouch)
+      window.removeEventListener('touchend', onLeave)
+      el?.removeEventListener('click', onClick)
+      el?.removeEventListener('mouseleave', onLeave)
+    }
   }, [])
 
-  const handleCategoryLeave = useCallback(() => {
-    leaveTimerRef.current = setTimeout(() => setExpandedCat(null), 200)
-  }, [])
-
-  let itemIndex = 0
   return (
-    <div className="space-y-6">
-      <p className="text-zinc-600 dark:text-zinc-400 text-base leading-relaxed max-w-2xl rounded-xl bg-white/35 dark:bg-zinc-950/45 backdrop-blur-xl px-5 py-4">
-        A mix of languages, platforms, and tools I use day to day—and a few I keep sharp for the right problem.
-      </p>
-      <motion.div
+    <div className="w-full flex flex-col gap-3">
+      {/* Field */}
+      <div
         ref={containerRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          rotateX,
-          rotateY,
-          transformPerspective: 800,
-        }}
-        className="relative min-h-[320px] rounded-2xl bg-white/30 dark:bg-zinc-800/40 backdrop-blur-xl shadow-sm p-6 sm:p-8 transition-colors duration-300 overflow-hidden"
+        className="relative w-full rounded-3xl cursor-crosshair overflow-hidden"
+        style={{ height: 'clamp(460px, 55vh, 640px)' }}
       >
-        {showGlow && (
+        {/* Cluster labels */}
+        {CLUSTERS.map(c => (
           <div
-            className="absolute pointer-events-none z-0 transition-opacity duration-300"
+            key={c.label}
+            className="absolute font-display font-black uppercase select-none pointer-events-none text-zinc-800/[0.18] dark:text-zinc-100/[0.28] leading-none tracking-widest"
             style={{
-              left: glowPos.x - 150,
-              top: glowPos.y - 150,
-              width: 300,
-              height: 300,
-              background: 'radial-gradient(circle, rgba(255,107,0,0.08) 0%, transparent 70%)',
+              left: `${c.cx}%`,
+              top:  `${c.cy}%`,
+              transform: 'translate(-50%,-50%)',
+              fontSize: 'clamp(13px, 1.6vw, 22px)',
             }}
+          >
+            {c.label}
+          </div>
+        ))}
+
+        {/* Click ripple */}
+        {ripples.map(r => (
+          <motion.div
+            key={r.id}
+            className="absolute rounded-full border border-brand-500/40 pointer-events-none"
+            style={{ left: r.x, top: r.y, x: '-50%', y: '-50%' }}
+            initial={{ width: 0, height: 0, opacity: 0.7 }}
+            animate={{ width: 360, height: 360, opacity: 0 }}
+            transition={{ duration: 0.75, ease: 'easeOut' }}
           />
-        )}
-        <div className="relative z-10 flex flex-wrap gap-4 sm:gap-5 content-start">
-          {categories.map((cat) => (
-            <div
-              key={cat.label}
-              className="flex flex-col gap-2 w-full sm:w-auto"
-              onMouseEnter={() => handleCategoryEnter(cat.label)}
-              onMouseLeave={handleCategoryLeave}
-            >
+        ))}
+
+        {/* Icons */}
+        {LAYOUT.map((lay, i) => (
+          <div
+            key={lay.icon.name}
+            style={{
+              position: 'absolute',
+              left: `${lay.ox}%`,
+              top:  `${lay.oy}%`,
+              transform: 'translate(-50%,-50%)',
+            }}
+          >
+            {/* displacement layer — RAF updates transform */}
+            <div ref={el => { dispRefs.current[i] = el }}>
+              {/* visual card — RAF updates box-shadow + scale */}
               <div
-                className={`text-xs font-medium uppercase tracking-wider text-left transition-colors duration-200 ${
-                  expandedCat === cat.label ? 'text-brand-500 dark:text-brand-400' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
-                }`}
+                ref={el => { cardRefs.current[i] = el }}
+                className="w-[68px] h-[68px] rounded-2xl flex items-center justify-center bg-white dark:bg-zinc-800 will-change-transform"
+                style={{ transition: 'box-shadow 0.1s' }}
               >
-                {cat.label} {expandedCat === cat.label ? '▾' : '▸'}
+                <lay.icon.Icon size={32} style={{ color: lay.icon.color }} />
               </div>
-              <div className="flex flex-wrap gap-2 sm:gap-3">
-                {cat.items.map((name) => {
-                  const idx = itemIndex++
-                  return (
-                    <motion.span
-                      key={name}
-                      initial={{ opacity: 0, scale: 0.92 }}
-                      animate={{ opacity: 1, scale: 1, transition: { delay: Math.min(idx * 0.02, 0.5), duration: 0.35, ease: [0.22, 1, 0.36, 1] } }}
-                      whileHover={{ scale: 1.02, y: -1 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                      className="inline-flex px-4 py-2.5 rounded-xl bg-white/40 dark:bg-zinc-700/50 backdrop-blur-sm text-zinc-700 dark:text-zinc-300 text-sm font-medium hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white/60 dark:hover:bg-zinc-700/70 cursor-default transition-colors duration-200"
-                    >
-                      {name}
-                    </motion.span>
-                  )
-                })}
-              </div>
+
+              {/* Tooltip */}
               <AnimatePresence>
-                {expandedCat === cat.label && (
+                {nearest === i && (
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="overflow-hidden w-full"
+                    initial={{ opacity: 0, y: 4, scale: 0.8 }}
+                    animate={{ opacity: 1, y: -6, scale: 1 }}
+                    exit={{ opacity: 0, y: 4, scale: 0.8 }}
+                    transition={{ duration: 0.1 }}
+                    className="absolute -top-8 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[11px] font-bold whitespace-nowrap pointer-events-none z-50"
                   >
-                    <div className="pt-3 pb-1 pl-1 space-y-3">
-                      <ul className="space-y-1.5">
-                        {cat.proof.bullets.map((b, i) => (
-                          <motion.li
-                            key={i}
-                            initial={{ opacity: 0, x: -8 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.08, duration: 0.3 }}
-                            className="text-zinc-600 dark:text-zinc-400 text-xs flex items-start gap-2"
-                          >
-                            <span className="text-brand-500 dark:text-brand-400 mt-0.5 shrink-0">→</span>
-                            <span>{b}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-                      <div className="flex items-center gap-3">
-                        <div className="flex-1 h-1 rounded-full bg-zinc-200 dark:bg-zinc-600 overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: '100%' }}
-                            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                            className={`h-full rounded-full bg-brand-500 dark:bg-brand-400 ${depthLabels[cat.proof.depth].width}`}
-                          />
-                        </div>
-                        <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                          {depthLabels[cat.proof.depth].label}
-                        </span>
-                      </div>
-                    </div>
+                    {lay.icon.name}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-          ))}
-        </div>
-      </motion.div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
-
-export default Capabilities

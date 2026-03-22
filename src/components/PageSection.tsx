@@ -11,6 +11,8 @@ interface PageSectionProps {
   contentFullWidth?: boolean
   /** When true, heading appears centered first then moves up and reveals content. */
   headingReveal?: boolean
+  /** Skip the solid bg-white/bg-black panel — lets the background effect show through. */
+  noBg?: boolean
 }
 
 const headingBlock = (
@@ -21,19 +23,19 @@ const headingBlock = (
     <TextScramble
       text={title}
       as="h2"
-      className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+      className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-black dark:text-white"
       speed={18}
     />
     {subtitle && (
-      <p className="text-zinc-600 dark:text-zinc-400 text-xl sm:text-2xl mt-4 sm:mt-5 max-w-3xl">
+      <p className="text-zinc-800 dark:text-zinc-200 text-xl sm:text-2xl mt-4 sm:mt-5 max-w-3xl">
         {subtitle}
       </p>
     )}
   </div>
 )
 
-const PageSection: React.FC<PageSectionProps> = ({ id, title, subtitle, children, sectionStyle, sectionClassName, contentFullWidth, headingReveal }) => {
-  const sectionClass = `relative min-h-full flex flex-col w-full px-4 sm:px-12 lg:px-16 xl:px-24 py-10 sm:py-14 bg-white dark:bg-black ${sectionClassName ?? ''}`
+const PageSection: React.FC<PageSectionProps> = ({ id, title, subtitle, children, sectionStyle, sectionClassName, contentFullWidth, headingReveal, noBg }) => {
+  const sectionClass = `relative min-h-full flex flex-col w-full px-4 sm:px-12 lg:px-16 xl:px-24 py-10 sm:py-14 ${noBg ? '' : 'bg-white dark:bg-black'} ${sectionClassName ?? ''}`
 
   if (headingReveal) {
     return (

@@ -81,6 +81,7 @@ const KeepInTouch: React.FC = () => {
       >
         Projects, collaboration, or a quick hello — I'd love to hear from you.
       </motion.p>
+
       <div className="mt-12 flex flex-wrap items-center gap-4 text-sm text-zinc-400 dark:text-zinc-500">
         <span className="font-mono tabular-nums tracking-tight" aria-label="Current time (24h)">
           {formatTime24(t)}

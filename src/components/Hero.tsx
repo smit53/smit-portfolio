@@ -1,16 +1,17 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowDown } from 'lucide-react'
 import TextScramble from './TextScramble'
 import RotatingPhrase from './RotatingPhrase'
+import ParticleText from './ParticleText'
+import { useSection } from '../context/SectionContext'
 
 interface HeroProps {
   visitorName: string | null
-  /** When true, do not render the welcome line (used when HeadingRevealLayout shows it). */
-  skipWelcomeLine?: boolean
 }
 
-const Hero: React.FC<HeroProps> = ({ visitorName, skipWelcomeLine }) => {
-  const [welcomeDone, setWelcomeDone] = useState(false)
+const Hero: React.FC<HeroProps> = ({ visitorName }) => {
+  const { goToNextSection } = useSection()
   const [p1Done, setP1Done] = useState(false)
   const [p2Done, setP2Done] = useState(false)
   const [p3Done, setP3Done] = useState(false)
@@ -20,118 +21,143 @@ const Hero: React.FC<HeroProps> = ({ visitorName, skipWelcomeLine }) => {
     ? `${visitorName} — glad you're here.`
     : "Glad you're here."
 
-  /* Slower scramble: speed = ms per character (higher = calmer). Stagger delays so each line finishes before the next. */
   const scrambleSpeed = 28
   const scrambleWidth = 2
 
   return (
     <div className="relative z-10 w-full">
+      {/* SMIT — particle hero name */}
       <motion.div
-        className="absolute -top-20 -right-20 w-[480px] h-[480px] rounded-full bg-brand-500/[0.06] dark:bg-brand-400/[0.06] blur-[100px] pointer-events-none"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-      />
-      <motion.div
-        className="absolute top-1/2 -left-32 w-72 h-72 rounded-full bg-zinc-400/[0.04] dark:bg-zinc-500/[0.04] blur-[80px] pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.8 }}
-      />
+        transition={{ duration: 0.3, delay: 0.15 }}
+        className="mb-4 sm:mb-6"
+      >
+        <ParticleText
+          text="SMIT"
+          fontWeight="900"
+          fontFamily="Syne, sans-serif"
+          particleSize={2.5}
+          particleGap={4}
+          repulsionRadius={140}
+          repulsionStrength={8}
+          returnSpeed={0.09}
+          damping={0.87}
+          maxFontSize={420}
+        />
+      </motion.div>
 
-      <div className="relative flex flex-col w-full">
-        {!skipWelcomeLine && (
-          <motion.p
-            className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-extrabold leading-[1.05] tracking-tighter mb-12 sm:mb-16"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <TextScramble
-              text={welcomeLine}
-              triggerOnMount
-              delay={400}
-              speed={scrambleSpeed}
-              scrambleWidth={scrambleWidth}
-              onComplete={() => setWelcomeDone(true)}
-              className={welcomeDone ? 'fluid-text' : 'text-zinc-700 dark:text-zinc-300'}
-            />
-          </motion.p>
-        )}
+      {/* Personalized sub-line */}
+      <motion.p
+        className="font-sans text-xl sm:text-2xl md:text-3xl font-semibold text-zinc-900 dark:text-white mb-8 sm:mb-10"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, delay: 0.35 }}
+      >
+        {welcomeLine}
+      </motion.p>
 
-        <motion.div
-          className="space-y-8 sm:space-y-10 lg:space-y-12 mb-16 sm:mb-24"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: {
-              transition: { staggerChildren: 0.18, delayChildren: 0.8 },
-            },
-          }}
+      {/* Accent divider */}
+      <motion.div
+        className="flex items-center gap-2 mb-8 sm:mb-10"
+        initial={{ opacity: 0, x: -16 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div className="h-px w-10 bg-brand-500" />
+        <div className="h-1.5 w-1.5 rounded-full bg-brand-500 shrink-0" />
+        <div className="h-px w-20 bg-zinc-200 dark:bg-zinc-800" />
+      </motion.div>
+
+      {/* Description paragraphs — TextScramble */}
+      <motion.div
+        className="space-y-4 sm:space-y-5 mb-10 sm:mb-14"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.1, delayChildren: 0.6 } },
+        }}
+      >
+        <motion.p
+          className="text-xl sm:text-2xl md:text-3xl font-bold leading-[1.45]"
+          variants={{ hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
-          <motion.p
-            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-[1.35] font-bold"
-            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <TextScramble
-              text="I'm a software engineer building AI-powered solutions at Intuit. I care about clean systems, thoughtful design, and shipping with impact."
-              triggerOnMount
-              delay={1200}
-              speed={scrambleSpeed}
-              scrambleWidth={scrambleWidth}
-              onComplete={() => setP1Done(true)}
-              className={p1Done ? 'fluid-text' : 'text-zinc-600 dark:text-zinc-400'}
-            />
-          </motion.p>
-          <motion.p
-            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-[1.35] font-bold"
-            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <TextScramble
-              text="I believe in clean code, thoughtful design, and systems that grow with care."
-              triggerOnMount
-              delay={3800}
-              speed={scrambleSpeed}
-              scrambleWidth={scrambleWidth}
-              onComplete={() => setP2Done(true)}
-              className={p2Done ? 'fluid-text' : 'text-zinc-600 dark:text-zinc-400'}
-            />
-          </motion.p>
-          <motion.p
-            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-[1.35] font-bold"
-            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <TextScramble
-              text="When I'm not shipping features, I'm exploring new tech, traveling, or diving into "
-              triggerOnMount
-              delay={6400}
-              speed={scrambleSpeed}
-              scrambleWidth={scrambleWidth}
-              onComplete={() => {
-                setP3Done(true)
-                setShowRotatingPhrase(true)
-              }}
-              className={p3Done ? 'fluid-text' : 'text-zinc-600 dark:text-zinc-400'}
-            />
-            <AnimatePresence>
-              {showRotatingPhrase && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="inline"
-                >
-                  <RotatingPhrase />.
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.p>
-        </motion.div>
-      </div>
+          <TextScramble
+            text="I'm a software engineer building AI-powered solutions at Intuit. I care about clean systems, thoughtful design, and shipping with impact."
+            triggerOnMount
+            delay={900}
+            speed={scrambleSpeed}
+            scrambleWidth={scrambleWidth}
+            onComplete={() => setP1Done(true)}
+            className={p1Done ? 'fluid-text' : 'text-black dark:text-white'}
+          />
+        </motion.p>
+
+        <motion.p
+          className="text-xl sm:text-2xl md:text-3xl font-bold leading-[1.45]"
+          variants={{ hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <TextScramble
+            text="I believe in clean code, thoughtful design, and systems that grow with care."
+            triggerOnMount
+            delay={3600}
+            speed={scrambleSpeed}
+            scrambleWidth={scrambleWidth}
+            onComplete={() => setP2Done(true)}
+            className={p2Done ? 'fluid-text' : 'text-black dark:text-white'}
+          />
+        </motion.p>
+
+        <motion.p
+          className="text-xl sm:text-2xl md:text-3xl font-bold leading-[1.45]"
+          variants={{ hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <TextScramble
+            text="When I'm not shipping features, I'm exploring new tech, traveling, or diving into "
+            triggerOnMount
+            delay={6000}
+            speed={scrambleSpeed}
+            scrambleWidth={scrambleWidth}
+            onComplete={() => {
+              setP3Done(true)
+              setShowRotatingPhrase(true)
+            }}
+            className={p3Done ? 'fluid-text' : 'text-black dark:text-white'}
+          />
+          <AnimatePresence>
+            {showRotatingPhrase && (
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="inline"
+              >
+                <RotatingPhrase />.
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </motion.p>
+      </motion.div>
+
+      {/* Scroll hint */}
+      <motion.div
+        className="flex justify-end"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 1.0 }}
+      >
+        <button
+          onClick={goToNextSection}
+          className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors duration-200 group cursor-pointer"
+        >
+          scroll
+          <ArrowDown className="w-3 h-3 group-hover:translate-y-0.5 transition-transform duration-200" />
+        </button>
+      </motion.div>
     </div>
   )
 }
